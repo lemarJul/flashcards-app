@@ -1,7 +1,5 @@
 # Mnemoniac App
 
-1. Clone the repo
-
 ## About The Project
 
 The Mnemoniac App is a personal project aimed at deepening my understanding of backend development using Node.js and Express. The application utilizes the concept of flashcards and the Leitner system to help users improve their memory.
