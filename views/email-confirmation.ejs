@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Email Confirmation</title>
+</head>
+<body>
+    <div class="container">
+        <h1>Email Confirmation</h1>
+        <p>Welcome, <strong><%= user.username %></strong></p>
+        <p><%= locals.alreadyConfirmed ? "Your email is already confirmed": "Your email has been successfully confirmed!"%></p>
+    </div>
+</body>
+</html>

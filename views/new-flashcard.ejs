@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h1>Register New Flashcard</h1>
+    <form action="/submit-flashcard" method="post">
+        <label for="question">Question:</label><br>
+        <input type="text" id="question" name="question" required><br>
+        <label for="answer">Answer:</label><br>
+        <input type="text" id="answer" name="answer" required><br>
+        <label for="categories">Categories:</label><br>
+        <input type="text" id="categories" name="categories" required><br>
+        <input type="submit" value="Submit">
+    </form>
+</body>
+</html>
+

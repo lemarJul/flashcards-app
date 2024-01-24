@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dashboard</title>
+  </head>
+  <body>
+    <body>
+      <header>
+        <h1><%= locals.user ? locals.user+"'s" : "Your"; %> Dashboard</h1>
+      </header>
+      <main>
+        <h2>Your Flashcards</h2>
+        <ul id="flashcard-list">
+          <!-- Flashcards will be dynamically inserted here -->
+        </ul>
+        <a href="/flashcards/new">Create a new flashcard</a>
+      </main>
+      <footer>
+        <p>© 2022 Flashcard App</p>
+      </footer>
+    </body>
+  </body>
+  <script>
+    // Path: public/js/dashboard.js
+    const flashcardList = document.getElementById("flashcard-list");
+    const flashcards = <%= JSON.stringify(locals.flashcards) %>;
+    flashcards.forEach((flashcard) => {
+      const flashcardItem = document.createElement("li");
+      flashcardItem.innerHTML = `
+        <a href="/flashcards/${flashcard.id}">${flashcard.question}</a>
+      `;
+      flashcardList.appendChild(flashcardItem);
+    });
+  </script>
+</html>

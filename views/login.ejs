@@ -1,0 +1,11 @@
+<% layout('boilerplate') -%> <% block('title').append('Sign In') %>
+
+<h1><%= locals.title %></h1>
+
+  <form action="/login" method="post">
+    <label for="email">Email</label>
+    <input type="text" name="email" placeholder="Email" />
+    <label for="password">Password</label>
+    <input type="password" name="password" placeholder="Password" />
+    <input type="submit" value="Login" />
+  </form>
