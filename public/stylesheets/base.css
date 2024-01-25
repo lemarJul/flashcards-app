@@ -111,11 +111,15 @@ nav ul:first-child {
 
 /* Footer styles */
 footer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
   background-color: var(--light-color);
 
   text-align: center;
   padding: 20px 0;
-
   bottom: 0;
   width: 100%;
   flex-shrink: 0;
@@ -172,4 +176,8 @@ form {
 .credits {
   font-size: 0.8em;
   color: var(--secondary-color);
+}
+
+.nogap {
+  gap: 0;
 }
