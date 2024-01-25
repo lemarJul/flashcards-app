@@ -1,3 +1,8 @@
-<% layout('pages/boilerplate') -%>
+<% layout('pages/boilerplate') -%> 
 <% block('title').append('Profile') %>
 
+<div id="flashcards-container">
+  <% for (let flashcard of (flashcards)) { %>
+  <%- include('partials/flashcard', {flashcard: flashcard}) %></li>
+  <% } %>
+  </div>

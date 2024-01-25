@@ -12,7 +12,28 @@ const router = express
   .get("/upcoming", (req, res) => res.render("upcoming"))
   .get("/dashboard", (req, res) => res.render("dashboard"))
   .get("/profile", (req, res) => res.render("profile"))
-  .get("/discover", (req, res) => res.render("discover"))
+  .get("/discover", (req, res) =>
+    res.render("discover", {
+      text : "Discover",
+      flashcards: [
+        {
+          id: 1,
+          question: "Flashcard 1",
+          answer: "Description 1",
+          image: "https://picsum.photos/200/300",
+          tags: ["tag1", "tag2", "tag3"],
+        },
+        {
+          id: 2,
+          question: "Flashcard 2",
+          answer: "Description 2",
+          image: "https://picsum.photos/200/300",
+          tags: ["tag1", "tag2", "tag3"],
+        },
+      ],
+    })
+  )
+  .get("/flashcard-template", (req, res) => res.render("partials/flashcard"))
   // Users
   .get("/signup", users.signup)
   .get("/login", users.login)
