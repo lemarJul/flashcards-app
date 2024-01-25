@@ -159,6 +159,12 @@ form {
   color: white;
   font-size: 1em;
   cursor: pointer;
+
+}
+.button-secondary {
+  background-color: var(--light-color);
+  color: var(--primary-color);
+  border: 1px solid var(--primary-color);
 }
 
 .flex-row {
