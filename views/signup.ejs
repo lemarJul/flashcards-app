@@ -1,23 +1,25 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title><%= locals.title %></title>
-  </head>
-  <body>
-    <h1><%= locals.title %></h1>
+<% layout('pages/boilerplate') -%> <% block('title').append('Sign Up') %>
 
-    <form action="/signup" method="post">
-      <label for="username">Username</label>
-      <input type="text" name="username" placeholder="Username" />
-      <label for="email">Email</label>
-      <input type="text" name="email" placeholder="Email" />
-      <label for="password">Password</label>
-      <input type="password" name="password" placeholder="Password" />
-      <label for="password2">Confirm Password</label>
-      <input type="password" name="confirmPassword" placeholder="Password" />
-      <input type="submit" value="Sign Up" />
-    </form>
-  </body>
-</html>
+<form action="/signup" method="post">
+  <div>
+    <label for="username">Username</label>
+    <input type="text" name="username" placeholder="Username" />
+    <label for="email">Email</label>
+    <input type="text" name="email" placeholder="Email" />
+    <label for="password">Password</label>
+    <input type="password" name="password" placeholder="Password" />
+    <label for="password2">Confirm Password</label>
+    <input type="password" name="confirmPassword" placeholder="Password" />
+  </div>
+  
+    <input class="button" type="submit" value="Sign Up" />
+    
+  <hr style="width: 100%; margin: 20px auto" />
+  <!-- Add this line -->
+
+  <div class="more-actions">
+    <p style="text-align: center; font-size: smaller">
+      Already have an account? <a href="/login">Sign In</a>
+    </p>
+  </div>
+</form>

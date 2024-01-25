@@ -1,11 +1,25 @@
-<% layout('boilerplate') -%> <% block('title').append('Sign In') %>
+<% layout('pages/boilerplate') -%> 
+<% block('title').append('Sign In') %>
 
-<h1><%= locals.title %></h1>
+<form action="/login" method="post">
+  <label for="email"
+    >Email: <input type="text" name="email" placeholder="Email"
+  /></label>
 
-  <form action="/login" method="post">
-    <label for="email">Email</label>
-    <input type="text" name="email" placeholder="Email" />
-    <label for="password">Password</label>
-    <input type="password" name="password" placeholder="Password" />
-    <input type="submit" value="Login" />
-  </form>
+  <label for="password"
+    >Password: <input type="password" name="password" placeholder="Password"
+  /></label>
+
+  <input class="button" type="submit" value="Login" />
+
+  <hr style="width:100%; margin: 20px auto"> <!-- Add this line -->
+
+  <div class="more-actions">
+    <p style="text-align: center; font-size: smaller">
+      Forgot your password? <a href="/forgot">Reset Password</a>
+      <br />
+      Or
+      <br />
+      Don't have an account? <a href="/signup">Sign Up</a></p>
+  </div>
+</form>

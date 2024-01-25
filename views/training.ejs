@@ -1,108 +1,98 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Quiz Page</title>
-    <style>
-      /* Add your existing styles here */
+<% layout('pages/boilerplate') -%> <% block('title').append('Training') %>
 
-      #progress-bar {
-        width: 100%;
-        background-color: #ddd;
-        height: 20px;
-        margin-top: 20px;
-        position: relative;
-      }
+<style>
+  /* Add your existing styles here */
 
-      #progress-fill {
-        height: 100%;
-        width: 0;
-        background-color: #4caf50;
-        transition: width 0.3s ease;
-      }
-    </style>
-  </head>
-  <body>
-    <div id="progress-bar">
-      <div id="progress-fill"></div>
+  #progress-bar {
+    width: 100%;
+    background-color: #ddd;
+    height: 20px;
+    margin-top: 20px;
+    position: relative;
+  }
+
+  #progress-fill {
+    height: 100%;
+    width: 0;
+    background-color: #4caf50;
+    transition: width 0.3s ease;
+  }
+</style>
+<div id="progress-bar">
+  <div id="progress-fill"></div>
+</div>
+<div id="quiz-container">
+  <h1>Quiz</h1>
+  <div id="question-container">
+    <p id="question-text"></p>
+    <button id="show-answer-btn">Show Answer</button>
+    <div id="answer-container" style="display: none">
+      <p id="answer-text"></p>
+      <button id="success-btn">Success</button>
+      <button id="failure-btn">Failure</button>
     </div>
-    <div id="quiz-container">
-      <h1>Quiz</h1>
-      <div id="question-container">
-        <p id="question-text"></p>
-        <button id="show-answer-btn">Show Answer</button>
-        <div id="answer-container" style="display: none">
-          <p id="answer-text"></p>
-          <button id="success-btn">Success</button>
-          <button id="failure-btn">Failure</button>
-        </div>
-      </div>
-    </div>
+  </div>
+</div>
 
+<script>
+    // Assuming questionsObject is provided from the backend
+    const questionsObject = <%- locals.questions %> ;
 
+    let currentQuestionIndex = 0;
 
-    <script>
-        // Assuming questionsObject is provided from the backend
-        const questionsObject = <%- locals.questions %> ;
+    document.addEventListener("DOMContentLoaded", function () {
+      const questionText = document.getElementById("question-text");
+      const showAnswerBtn = document.getElementById("show-answer-btn");
+      const answerContainer = document.getElementById("answer-container");
+      const answerText = document.getElementById("answer-text");
+      const successBtn = document.getElementById("success-btn");
+      const failureBtn = document.getElementById("failure-btn");
 
-        let currentQuestionIndex = 0;
-
-        document.addEventListener("DOMContentLoaded", function () {
-          const questionText = document.getElementById("question-text");
-          const showAnswerBtn = document.getElementById("show-answer-btn");
-          const answerContainer = document.getElementById("answer-container");
-          const answerText = document.getElementById("answer-text");
-          const successBtn = document.getElementById("success-btn");
-          const failureBtn = document.getElementById("failure-btn");
-
-          // Function to display the current question
-          function displayQuestion() {
-            questionText.textContent =
-              questionsObject[currentQuestionIndex].question;
-            answerText.textContent = questionsObject[currentQuestionIndex].answer;
-            answerContainer.style.display = "none";
-          }
-          function updateProgressBar() {
-        const progressFill = document.getElementById('progress-fill');
-        const progressPercentage = ((currentQuestionIndex + 1) / questionsObject.length) * 100;
-        progressFill.style.width = `${progressPercentage}%`;
+      // Function to display the current question
+      function displayQuestion() {
+        questionText.textContent =
+          questionsObject[currentQuestionIndex].question;
+        answerText.textContent = questionsObject[currentQuestionIndex].answer;
+        answerContainer.style.display = "none";
       }
+      function updateProgressBar() {
+    const progressFill = document.getElementById('progress-fill');
+    const progressPercentage = ((currentQuestionIndex + 1) / questionsObject.length) * 100;
+    progressFill.style.width = `${progressPercentage}%`;
+  }
 
-          // Event listener for 'Show Answer' button
-          showAnswerBtn.addEventListener("click", function () {
-            answerContainer.style.display = "block";
-          });
+      // Event listener for 'Show Answer' button
+      showAnswerBtn.addEventListener("click", function () {
+        answerContainer.style.display = "block";
+      });
 
-          // Event listener for 'Success' button
-          successBtn.addEventListener("click", function () {
-            // Move to the next question
-            currentQuestionIndex++;
-            if (currentQuestionIndex < questionsObject.length) {
-              displayQuestion();
-            } else {
-              // Quiz completed
-              alert("Quiz completed!");
-            }
-            updateProgressBar();
-          });
-
-          // Event listener for 'Failure' button
-          failureBtn.addEventListener("click", function () {
-            // Move to the next question
-            currentQuestionIndex++;
-            if (currentQuestionIndex < questionsObject.length) {
-              displayQuestion();
-            } else {
-              // Quiz completed
-              alert("Quiz completed!");
-            }
-            updateProgressBar();
-          });
-
-          // Initialize the quiz
+      // Event listener for 'Success' button
+      successBtn.addEventListener("click", function () {
+        // Move to the next question
+        currentQuestionIndex++;
+        if (currentQuestionIndex < questionsObject.length) {
           displayQuestion();
-        });
-    </script>
-  </body>
-</html>
+        } else {
+          // Quiz completed
+          alert("Quiz completed!");
+        }
+        updateProgressBar();
+      });
+
+      // Event listener for 'Failure' button
+      failureBtn.addEventListener("click", function () {
+        // Move to the next question
+        currentQuestionIndex++;
+        if (currentQuestionIndex < questionsObject.length) {
+          displayQuestion();
+        } else {
+          // Quiz completed
+          alert("Quiz completed!");
+        }
+        updateProgressBar();
+      });
+
+      // Initialize the quiz
+      displayQuestion();
+    });
+</script>

@@ -1,18 +1,11 @@
-<% layout('boilerplate') -%> <%- block('title').append('Home') %>
-
-<header>
-  <h1>Welcome to Mnemoniac App!</h1>
-</header>
-<main>
-  <h2>What is Mnemoniac App?</h2>
+<% layout('pages/boilerplate') %> <% block('title').append('About') %>
+<div>
+  <h2>What is Mnemoniac ?</h2>
   <p>
     This is a simple web app to create and manage flashcards for your study
     sessions using the Leitner System.
   </p>
-  <a href="/register">Register</a> or <a href="/login">Login</a> to get started.
-</main>
 
-<div>
   <h2>What are flashcards?</h2>
   <p>
     Flashcards are a popular and effective tool for learning and memorization.
@@ -59,4 +52,3 @@
 <div>
   <a href="/upcoming">See upcoming features</a>
 </div>
-

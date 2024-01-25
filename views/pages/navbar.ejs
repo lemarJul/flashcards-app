@@ -1,0 +1,12 @@
+<nav>
+    <ul>
+        <li><a href="/"><img src="images/logo-dark.png" alt="Logo" width="250px" ></a></li>
+        <li><a href="/about">About</a></li>
+        <% if (!locals.user) { %>
+            <li style="float: right"><a href="/login">Sign In</a></li>
+        <% } else { %>
+            <li style="float: right"><a href="/profile">Profile</a></li>
+            <li style="float: right"><%= locals.user.name %></li>
+        <% } %>
+    </ul>
+</nav>

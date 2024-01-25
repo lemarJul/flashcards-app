@@ -1,0 +1,47 @@
+<% layout('pages/boilerplate') -%>
+<%- block('title').append('Home') %>
+
+<main>
+  <script
+    src="https://unpkg.com/@dotlottie/player-component@latest/dist/dotlottie-player.mjs"
+    type="module"
+  >
+    window.onload = (event) => {
+      const player = document.querySelector('dotlottie-player');
+      player.addEventListener('loop', () => {
+        player.direction *= -1;
+      });
+    }
+  </script>
+
+  <div class="flex-row" style="gap: 20px;">
+    <dotlottie-player
+      src="https://lottie.host/a9673565-000d-4661-9f45-fd97cc60ee32/xyKURpw8TA.json"
+      background="transparent"
+      speed="1"
+      style="width: 400px; height: 400px"
+      PlayMode="bounce"
+      loop
+      autoplay
+    ></dotlottie-player>
+
+    <div class="flex-column" style="width: 400px; text-align: center;">
+      <h2>Wan to boost your Neural Network ?</h2>
+      <div class="flex-row">
+        
+        <input
+        class="button"
+        type="button"
+        value="Boost Now !"
+        onclick="window.location.href='/start'"
+        />
+        <input
+        class="button"
+        type="button"
+        value="Sign In"
+        onclick="window.location.href='/login'"
+        />
+      </div>
+    </div>
+  </div>
+</main>
