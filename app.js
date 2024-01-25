@@ -27,7 +27,7 @@ module.exports = class MnemoniacApp extends express {
     this.set("view engine", "ejs");
     this.set("views", __dirname + "/views");
     this.use(logger(...logConfig));
-    this.use(favicon(__dirname + "/public/images/favicon.ico"));
+    this.use(favicon(__dirname + "/public/images/card.ico"));
     this.use(bodyParser.urlencoded({ extended: false }));
     this.use(bodyParser.json());
     this.use(cors());
