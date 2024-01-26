@@ -1,5 +1,5 @@
 :root {
-  --primary-color: #007bff;
+  --primary-color: #109dff;
   --secondary-color: #6c757d;
   --success-color: #28a745;
   --danger-color: #dc3545;
@@ -7,11 +7,13 @@
   --info-color: #17a2b8;
   --light-color: #f8f9fa;
   --dark-color: #343a40;
+  --hover-color: #fe6e00;
   --breakpoint-sm: 576px;
   --breakpoint-md: 768px;
   --breakpoint-lg: 992px;
   --breakpoint-xl: 1200px;
 }
+
 /* Reset some default styles */
 body,
 h1,
@@ -22,6 +24,7 @@ a {
   padding: 0;
   font-family: Arial, sans-serif;
 }
+
 body {
   background-color: #f8f9fa;
   color: #333;
@@ -43,7 +46,7 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
-    justify-content: center;
+  justify-content: center;
   padding: 0 20px;
   margin: 20px auto;
 }
@@ -78,7 +81,7 @@ a {
   cursor: pointer;
 }
 a:hover {
-  text-decoration: underline;
+  color: var(--hover-color);
 }
 
 /* Navbar styles */
@@ -88,14 +91,13 @@ nav {
   text-align: center;
   padding: 10px 20px;
   width: 100%;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
 }
 
 nav ul {
   list-style-type: none;
   margin: 0;
   padding: 0;
-
   display: flex;
   align-items: center;
 }
@@ -117,7 +119,6 @@ footer {
   justify-content: center;
   gap: 10px;
   background-color: var(--light-color);
-
   text-align: center;
   padding: 20px 0;
   bottom: 0;
@@ -126,13 +127,8 @@ footer {
 }
 
 footer a {
-
   text-decoration: none;
   margin: 0 15px;
-}
-
-footer a:hover {
-  color: var(--primary-color);
 }
 
 footer p {
@@ -143,8 +139,8 @@ form {
   display: flex;
   gap: 20px;
   flex-direction: column;
-
-  max-width: 500px;
+  width: 400px;
+  aspect-ratio: 16/9;
   margin: 0 auto;
   padding: 40px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
@@ -159,13 +155,13 @@ form {
   color: white;
   font-size: 1em;
   cursor: pointer;
-
 }
 .button-secondary {
   background-color: var(--light-color);
   color: var(--primary-color);
   border: 1px solid var(--primary-color);
 }
+
 .button-outline {
   background-color: transparent;
   color: var(--primary-color);
@@ -178,12 +174,14 @@ form {
   align-items: center;
   gap: 20px;
 }
+
 .flex-column {
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 20px;
 }
+
 .credits {
   font-size: 0.8em;
   color: var(--secondary-color);
