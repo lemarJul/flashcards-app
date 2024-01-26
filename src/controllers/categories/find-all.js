@@ -3,7 +3,7 @@ const { sequelize } = require("../../db");
 
 module.exports = async (req, res, next) => {
   try {
-    const flashcards = Flashcard.findAll({
+    const flashcards = await Flashcard.findAll({
       attributes: [
         [sequelize.fn("DISTINCT", sequelize.col("category")), "category"],
       ],
