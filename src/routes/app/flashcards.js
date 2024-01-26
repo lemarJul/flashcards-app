@@ -1,23 +1,23 @@
 const { Flashcard } = require("../../db");
 
-module.exports.new = (req, res) => {
-  return res.render("new-flashcard", { title: "New flashcard" });
-};
-
-module.exports.list = (req, res) => {
-  Flashcard.findAll({}).then((flashcards) =>
-    res.render("flashcards", {
-      flashcards,
-    })
-  );
-};
-
-module.exports.show = (req, res) => {
-  Flashcard.findByPk(req.params.id).then((flashcard) =>
-    res.render("flashcard", {
-      flashcard,
-    })
-  );
+module.exports.views = {
+  new: (req, res) => {
+    return res.render("pages/new-flashcard", { title: "New flashcard" });
+  },
+  list: (req, res) => {
+    Flashcard.findAll({}).then((flashcards) =>
+      res.render("pages/flashcards", {
+        flashcards,
+      })
+    );
+  },
+  show: (req, res) => {
+    Flashcard.findByPk(req.params.id).then((flashcard) =>
+      res.render("pages/single-flashcard", {
+        flashcard,
+      })
+    );
+  },
 };
 
 module.exports.create = (req, res) => {
@@ -29,9 +29,7 @@ module.exports.create = (req, res) => {
 
 module.exports.delete = (req, res) => {
   Flashcard.destroy({ where: { id: req.params.id } })
-    .then(() =>
-      res.redirect('/dashboard')
-    )
+    .then(() => res.redirect("/dashboard"))
     .catch((error) => {
       res.status(500).json({
         message: "Error in deleting flashcard",

@@ -6,14 +6,14 @@ const clearNotConfirmed = require("../../controllers/users/clear-not-confirmed.j
 const router = express
   .Router()
   .get("/", (req, res) => {
-    res.render("home");
+    res.render("pages/home");
   })
-  .get("/about", (req, res) => res.render("about"))
-  .get("/upcoming", (req, res) => res.render("upcoming"))
-  .get("/dashboard", (req, res) => res.render("dashboard"))
-  .get("/profile", (req, res) => res.render("profile"))
+  .get("/about", (req, res) => res.render("pages/about"))
+  .get("/upcoming", (req, res) => res.render("pages/upcoming"))
+  .get("/dashboard", (req, res) => res.render("pages/dashboard"))
+  .get("/profile", (req, res) => res.render("pages/profile"))
   .get("/discover", (req, res) =>
-    res.render("discover", {
+    res.render("pages/discover", {
       text : "Discover",
       flashcards: [
         {
@@ -33,17 +33,18 @@ const router = express
       ],
     })
   )
-  .get("/flashcard-template", (req, res) => res.render("partials/flashcard"))
+  .get("/test/flashcard", (req, res) => res.render("partials/flashcard"))
   // Users
   .get("/signup", users.signup)
-  .get("/login", users.login)
+  .get("/login", users.views.login)
   .get("/clear-not-confirmed", clearNotConfirmed)
   .post("/signup", users.submit)
-  .get("/training", users.training)
+  .get("/training", users.views.training)
   .get("/confirm-email", confirmEmail)
+  .get("/forgot", users.views.forgotPassword)
   // Flashcards
-  .get("/flashcards/new", flashcards.new)
-  .get("/flashcards/:id", flashcards.show)
+  .get("/flashcards/new", flashcards.views.new)
+  .get("/flashcards/:id", flashcards.views.show)
   .post("/flashcards", flashcards.create)
   .delete("/flashcards/:id", flashcards.delete);
 

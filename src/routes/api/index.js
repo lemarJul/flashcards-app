@@ -4,7 +4,7 @@ const loadCategoriesRoutes = require("./categories.js");
 const router = require("express").Router();
 
 router.get("/", (req, res) => {
-  res.render("api", { stack: ["Node.js", "Express", "Sequelize"] });
+  res.render("pages/api", { stack: ["Node.js", "Express", "Sequelize"] });
 });
 
 loadFlashcardsRoutes(router);

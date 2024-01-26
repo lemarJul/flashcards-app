@@ -1,11 +1,7 @@
 const { Flashcard } = require("../../db");
 
 module.exports.signup = (req, res) => {
-  return res.render("signup", { title: "signup" });
-};
-
-module.exports.login = (req, res) => {
-  return res.render("login");
+  return res.render("pages/signup", { title: "signup" });
 };
 
 module.exports.submit = (req, res) => {
@@ -20,19 +16,27 @@ module.exports.submit = (req, res) => {
   }
 };
 
-module.exports.training = (req, res) => {
-  Flashcard.findAll({
-    limit: 5,
-    where: {
-      // category : req.query.category
-    },
-  }).then((flashcards) =>
-    res.render("training", {
-      questions: JSON.stringify(flashcards),
-    })
-  );
-};
 module.exports.dashboard = (req, res) => {
   return res.render("dashboard", { title: "Dashboard" });
 };
 
+module.exports.views = {
+  login: (req, res) => {
+    return res.render("pages/login");
+  },
+  forgotPassword: (req, res) => {
+    return res.render("pages/forgot-password");
+  },
+  training: (req, res) => {
+    Flashcard.findAll({
+      limit: 5,
+      where: {
+        // category : req.query.category
+      },
+    }).then((flashcards) =>
+      res.render("pages/training", {
+        questions: JSON.stringify(flashcards),
+      })
+    );
+  },
+};

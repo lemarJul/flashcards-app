@@ -11,7 +11,7 @@ module.exports = async (req, res, next) => {
     if (!user) throw new Api404Error("Invalid token");
 
     if (user.emailConfirmed)
-      return res.render("email-confirmation", { user, alreadyConfirmed: true });
+      return res.render("pages/email-confirmation", { user, alreadyConfirmed: true });
 
     if (user.confirmationTokenExpires < Date.now()) {
       // If the token has expired, show an error message
@@ -21,7 +21,7 @@ module.exports = async (req, res, next) => {
     user.emailConfirmed = true;
     await user.save();
 
-    res.render("email-confirmation", { user });
+    res.render("pages/email-confirmation", { user });
   } catch (error) {
     if (!error instanceof BaseError)
       error.message = `Error in creating new user: ${error.message}`;
