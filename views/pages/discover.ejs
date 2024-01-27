@@ -1,8 +1,34 @@
 <% layout('pages/boilerplate') -%> 
 <% block('title').append('Profile') %>
 
+<% var flashcards = flashcards || [
+{
+  id: 1,
+  question: "Flashcard 1",
+  answer: "Description 1",
+  image: "https://picsum.photos/200/300",
+  tags: ["tag1", "tag2", "tag3"],
+},
+{
+  id: 2,
+  question: "Flashcard 2",
+  answer: "Description 2",
+  image: "https://picsum.photos/200/300",
+  tags: ["tag1", "tag2", "tag3"],
+},
+{
+  id: 3,
+  question: "Flashcard 3",
+  answer: "Description 3",
+  image: "https://picsum.photos/200/300",
+  tags: ["tag1", "tag2", "tag3"],
+}
+] %>
+
+
 <div id="flashcards-container">
   <% for (let flashcard of (flashcards)) { %>
   <%- include('../partials/flashcard', {flashcard: flashcard}) %></li>
   <% } %>
   </div>
+
