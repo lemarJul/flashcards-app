@@ -1,0 +1,81 @@
+<% layout('pages/boilerplate') %>
+
+<input type="search" id="search" placeholder="Search flashcards">
+
+<select id="filter">
+  <option value="all">All</option>
+  <!-- Add more options as needed -->
+</select>
+
+<ul id="flashcards-container" class="flashcard-list"></ul>
+
+<script>
+  window.onload = function () {
+    var flashcards = fetch("/api/flashcards")
+      .then((response) => response.json())
+      .then(({ data }) => {
+        console.log(data);
+        displayFlashcards(data);
+        return data;
+      });
+
+    var categories = fetch("/api/categories")
+      .then((response) => response.json())
+      .then(({ data }) => {
+        console.log(data);
+        displayCategories(data);
+        return data;
+      });
+
+    function displayFlashcards(flashcards) {
+      var flashcardsContainer = document.getElementById("flashcards-container");
+      flashcardsContainer.innerHTML = "";
+      for (let flashcard of flashcards) {
+        flashcardsContainer.innerHTML += `
+            <li class="flashcard-container">
+            <div class="flashcard" onclick="this.classList.toggle('flip')">
+                <div class="front">
+                <p>
+                    ${flashcard.question}
+                </p>
+                </div>
+                <div class="back flex-row">
+                <p>
+                    ${flashcard.answer}
+                </p>
+                </div>
+                <div >
+                <p>
+                    ${flashcard.category}
+                </p>
+                </div>
+            </div>
+            </li>
+            `;
+      }
+    }
+
+    function displayCategories(categories) {
+      var filter = document.getElementById("filter");
+      //filter.innerHTML = "";
+      for (let category of categories) {
+        filter.innerHTML += `
+            <option value="${category}">${category}</option>
+            `;
+      }
+    }
+
+    document.getElementById('search').addEventListener('input', function() {
+      var query = this.value.toLowerCase();
+      var flashcards = document.querySelectorAll('.flashcard-container');
+      flashcards.forEach(function(flashcard) {
+        var text = flashcard.textContent.toLowerCase();
+        if (text.includes(query)) {
+          flashcard.style.display = 'block';
+        } else {
+          flashcard.style.display = 'none';
+        }
+      });
+    });
+};
+</script>
