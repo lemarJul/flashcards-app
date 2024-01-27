@@ -1,7 +1,4 @@
-
-
 <% var flashcard = flashcard || {question: 'Default question', answer: 'Default answer'}; %>
-
 
 <div class="flashcard-container">
   <div class="flashcard" onclick="this.classList.toggle('flip')">
@@ -21,7 +18,7 @@
       style="width: 80%"
       type="radio"
       id="right"
-      name="success"
+      name=<%= flashcard.id + '-success' %>
       value="true"
       />
       <label for="right">Right</label>
@@ -29,7 +26,7 @@
         style="width: 80%"
         type="radio"
         id="wrong"
-        name="success"
+        name=<%= flashcard.id + '-success' %>
         value="false"
       />
       <label for="wrong">Wrong</label>
