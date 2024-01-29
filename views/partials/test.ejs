@@ -7,6 +7,6 @@
     <title>Partials test - <%= locals.partial%></title>
   </head>
   <body style="background-color: grey;">
-   <%- include( locals.partial)  %>
+   <%- include( locals.partial, {locals: {test : true}})  %>
   </body>
 </html>
