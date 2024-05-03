@@ -1,6 +1,18 @@
 const crypto = require("crypto");
 const bcrypt = require("bcrypt");
 
+/**
+ * @typedef {import('sequelize').Sequelize} Sequelize
+ * @typedef {import('sequelize').DataTypes} DataTypes
+ * @typedef {import('sequelize').Model} Model
+
+ */
+
+/**
+ * @param {Sequelize} sequelize Sequelize Instance
+ * @param {DataTypes} DataTypes DataTypes
+ * @returns {Model} User Model
+ */
 module.exports = (sequelize, DataTypes) => {
   return sequelize.define("user", {
     id: {
@@ -66,7 +78,7 @@ module.exports = (sequelize, DataTypes) => {
         }
       },
     },
-    
+
     confirmationToken: {
       type: DataTypes.STRING,
       allowNull: true,
