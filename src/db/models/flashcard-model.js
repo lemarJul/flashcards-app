@@ -1,28 +1,31 @@
+//@ts-check
 /**
  * @typedef {import('sequelize').Sequelize} Sequelize
  * @typedef {import('sequelize').DataTypes} DataTypes
  * @typedef {import('sequelize').Model} Model
+ * @typedef {import('sequelize').ModelStatic<Model>} ModelStatic
  */
 
 /**
- *
+ *  Flashcard Model - Represents a Flashcard
  * @param {Sequelize} sequelize Sequelize Instance
- * @param {DataTypes} DatatTypes DataTypes
- * @returns {Model} Flashcard Model
+ * @param {DataTypes} DataTypes DataTypes
+ * @returns {ModelStatic} Flashcard Model
  */
-module.exports = (sequelize, DatatTypes) => {
+module.exports = (sequelize, DataTypes) => {
   return sequelize.define(
     "flashcard",
     {
       id: {
-        type: DatatTypes.INTEGER,
+        type: DataTypes.INTEGER,
         primaryKey: true,
         autoIncrement: true,
       },
       question: {
-        type: DatatTypes.STRING,
+        type: DataTypes.STRING,
         allowNull: false,
         unique: {
+          name: "question",
           msg: "This question already exists",
         },
         validate: {
@@ -36,7 +39,7 @@ module.exports = (sequelize, DatatTypes) => {
         },
       },
       answer: {
-        type: DatatTypes.STRING,
+        type: DataTypes.STRING,
         allowNull: false,
         validate: {
           notEmpty: {
@@ -48,13 +51,17 @@ module.exports = (sequelize, DatatTypes) => {
           },
         },
       },
+
       category: {
-        type: DatatTypes.STRING,
+        type: DataTypes.STRING,
         allowNull: true,
 
         get() {
           return this.getDataValue("category")?.split(",");
         },
+        /**
+         * @param {string[]} category
+         */
         set(category) {
           this.setDataValue("category", category.join());
         },
@@ -66,3 +73,5 @@ module.exports = (sequelize, DatatTypes) => {
     }
   );
 };
+
+
