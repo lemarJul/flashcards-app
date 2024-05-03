@@ -1,14 +1,8 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Dashboard</title>
-  </head>
-  <body>
-    <body>
+<% layout('pages/boilerplate')%>
+<% block('title').append('Dashboard') %>
+
       <header>
-        <h1><%= locals.user ? locals.user+"'s" : "Your"; %> Dashboard</h1>
+        <h1><%= locals.user ? locals.user.username+"'s" : "Your"; %> Dashboard</h1>
       </header>
       <main>
         <h2>Your Flashcards</h2>
@@ -20,8 +14,7 @@
       <footer>
         <p>© 2022 Flashcard App</p>
       </footer>
-    </body>
-  </body>
+  
   <script>
     // Path: public/js/dashboard.js
     const flashcardList = document.getElementById("flashcard-list");
@@ -34,4 +27,4 @@
       flashcardList.appendChild(flashcardItem);
     });
   </script>
-</html>
+
