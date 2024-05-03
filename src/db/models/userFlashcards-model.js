@@ -1,5 +1,17 @@
-const {Model} = require("sequelize"); 
+const { Model } = require("sequelize");
 
+/**
+ * @typedef {import('sequelize').Sequelize} Sequelize
+ * @typedef {import('sequelize').DataTypes} DataTypes
+ * @typedef {import('sequelize').Model} Model
+ */
+
+/**
+ *  UserFlashcards Model
+ * @param {Sequelize} sequelize Sequelize Instance
+ * @param {DataTypes} DataTypes DataTypes
+ * @returns {Model} UserFlashcards Model
+ */
 module.exports = (sequelize, DataTypes) => {
   return sequelize.define("user_flashcard", {
     lastTraining: {
@@ -19,6 +31,4 @@ module.exports = (sequelize, DataTypes) => {
   });
 };
 
-class UserFlashcards extends Model {
-
-}
+class UserFlashcards extends Model {}
