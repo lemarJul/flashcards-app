@@ -1,3 +1,15 @@
+/**
+ * @typedef {import('sequelize').Sequelize} Sequelize
+ * @typedef {import('sequelize').DataTypes} DataTypes
+ * @typedef {import('sequelize').Model} Model
+ */
+
+/**
+ *
+ * @param {Sequelize} sequelize Sequelize Instance
+ * @param {DataTypes} DatatTypes DataTypes
+ * @returns {Model} Flashcard Model
+ */
 module.exports = (sequelize, DatatTypes) => {
   return sequelize.define(
     "flashcard",
@@ -39,8 +51,9 @@ module.exports = (sequelize, DatatTypes) => {
       category: {
         type: DatatTypes.STRING,
         allowNull: true,
+
         get() {
-          return this.getDataValue("category")?.split(",") ;
+          return this.getDataValue("category")?.split(",");
         },
         set(category) {
           this.setDataValue("category", category.join());
