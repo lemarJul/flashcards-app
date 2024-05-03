@@ -1,17 +1,17 @@
+//@ts-check
 const crypto = require("crypto");
 const bcrypt = require("bcrypt");
-
 /**
  * @typedef {import('sequelize').Sequelize} Sequelize
  * @typedef {import('sequelize').DataTypes} DataTypes
  * @typedef {import('sequelize').Model} Model
-
+ * @typedef {import('sequelize').ModelStatic<Model>} ModelStatic
  */
 
 /**
  * @param {Sequelize} sequelize Sequelize Instance
  * @param {DataTypes} DataTypes DataTypes
- * @returns {Model} User Model
+ * @returns {ModelStatic} User Model
  */
 module.exports = (sequelize, DataTypes) => {
   return sequelize.define("user", {
@@ -24,6 +24,7 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       allowNull: false,
       unique: {
+        name: "username",
         msg: "This username already exists",
       },
       validate: {
@@ -44,6 +45,10 @@ module.exports = (sequelize, DataTypes) => {
           msg: "Please enter a password",
         },
       },
+      /**
+       * Hashes the password before saving it to the database
+       * @param {String} value
+       */
       set(value) {
         const hashedPassword = bcrypt.hashSync(value, 10);
         this.setDataValue("password", hashedPassword);
@@ -53,6 +58,7 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       allowNull: false,
       unique: {
+        name: "email",
         msg: "This email is already in use",
       },
       validate: {
