@@ -1,12 +1,14 @@
+//@ts-check
+
 const { Sequelize, DataTypes } = require("sequelize");
-const config = require("./config.js")
+const config = require("./config.js");
 //models
 const FlashcardModel = require("./models/flashcard-model.js");
 const UserModel = require("./models/user-model.js");
 const UserFlashcardsModel = require("./models/userFlashcards-model.js");
 //data
 const flashcardsStarter = require("./flashcards-starter.js");
-//paswword hashing
+//password hashing
 const bcrypt = require("bcrypt");
 
 const sequelize = new Sequelize(...config);
@@ -22,6 +24,10 @@ const User = UserModel(sequelize, DataTypes);
 // User.Flashcards = User.belongsToMany(Flashcard, { through: UserFlashcards });
 // Flashcard.Users = Flashcard.belongsToMany(User, { through: UserFlashcards });
 
+/**
+ * Initializes the database tables and creates initial data.
+ * @returns {Promise<void>} A promise that resolves when the initialization is complete.
+ */
 const initTables = async () => {
   try {
     await sequelize.sync({ force: true });
@@ -50,7 +56,6 @@ const initTables = async () => {
         console.log(`flashcard ${i + 1} created successfully!`);
       })
     );
-
   } catch (e) {
     console.error(e);
   }
