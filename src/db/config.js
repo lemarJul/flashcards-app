@@ -1,10 +1,23 @@
+// @ts-check
+/**
+ * @typedef {import('sequelize').Options} Options
+ */
+
 const isDev = process.env.NODE_ENV === "development";
 
-const config = {
-  database: isDev ? "mnemoniac" : "",
-  username: isDev ? "root" : "",
-  password: isDev ? "" : "",
-  options: {
+/**
+ * Database configuration
+ * @type {[String, String, String, Options]}
+ * @property {String} 0 - database
+ * @property {String} 1 - username
+ * @property {String} 2 - password
+ * @property {Options} 3 - options
+ */
+const config = [
+  isDev ? "mnemoniac" : "",
+  isDev ? "root" : "",
+  isDev ? "" : "",
+  {
     host: isDev ? "localhost" : "",
     dialect: "mariadb",
     dialectOptions: {
@@ -12,6 +25,6 @@ const config = {
     },
     logging: isDev ? false : true,
   },
-};
+];
 
-module.exports = Object.values(config);
+module.exports = config;
