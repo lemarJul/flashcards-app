@@ -13,7 +13,9 @@ module.exports = async (req, res, next) => {
       throw new Api400Error("Please provide username, email and password");
 
     createUser(req, res, next).then(() => {
-      sendEmailConfirmation(req, res, next);
+      if(req.user) {
+        sendEmailConfirmation(req, res, next);
+      }
     });
     
   } catch (error) {
