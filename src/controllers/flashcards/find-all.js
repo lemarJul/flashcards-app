@@ -1,9 +1,8 @@
-const { Flashcard } = require("../../db");
+const { Flashcard } = require("../../db").sequelize.models;
 const { Op } = require("sequelize");
-const { parseHyphenatedString } = require("../../utils.js");
+const { parseHyphenatedString } = require("../../utils/utils.js");
 const { SqlError } = require("mariadb");
 const retry = require("async-retry");
-const fetch = require("node-fetch");
 
 module.exports = async (req, res, next) => {
   const searchOptions = toSearchOptions(req.query);
@@ -22,7 +21,6 @@ module.exports = async (req, res, next) => {
     next(error);
   }
 
-  
   function toSearchOptions(query) {
     const { category, content, limit, offset, order } = query;
     const output = {};

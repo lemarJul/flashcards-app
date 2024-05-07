@@ -1,4 +1,4 @@
-const { User } = require("../../db");
+const { User } = require("../../db").sequelize.models;
 const resourceName = "user";
 const baseUpdate = require("../base-controller/update.js");
 const updateModifier = require("./update-modifier.js");
@@ -11,7 +11,6 @@ module.exports = {
   deleteById: require("../base-controller/delete-by-pk.js")(resourceName, User),
   sendLoadedResource: require("../base-controller/send-loaded-resource.js")(
     resourceName
-    
   ),
   confirmEmail: require("./confirm-email.js"),
 };

@@ -1,4 +1,4 @@
-const { User } = require("../../db");
+const { User } = require("../../db").sequelize.models;
 const { Api400Error } = require("../../errors/api-errors");
 const baseCreate = require("../base-controller/create.js");
 const createUser = baseCreate("user", User);

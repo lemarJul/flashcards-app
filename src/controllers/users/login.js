@@ -1,4 +1,4 @@
-const { User } = require("../../db/index.js");
+const { User } = require("../../db/index.js").sequelize.models;
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const { Api400Error, Api404Error } = require("../../errors/api-errors.js");

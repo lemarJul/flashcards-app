@@ -1,5 +1,4 @@
-const { Flashcard } = require("../../db");
-const { sequelize } = require("../../db");
+const { Flashcard } = require("../../db").sequelize.models;
 
 module.exports = async (req, res, next) => {
   try {
@@ -21,6 +20,6 @@ module.exports = async (req, res, next) => {
     });
   } catch (error) {
     error.message = `Error in fetching list of categories: ${error.message}`;
-    next(error)
+    next(error);
   }
 };

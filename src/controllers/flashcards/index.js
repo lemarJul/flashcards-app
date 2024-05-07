@@ -1,5 +1,5 @@
 const BaseController = require("../base-controller/index.js");
-const { Flashcard } = require("../../db");
+const { Flashcard } = require("../../db").sequelize.models;
 const resourceName = "flashcard";
 const baseUpdate = require("../base-controller/update.js");
 const updateModifier = require("./update-modifier.js");
