@@ -1,7 +1,7 @@
 //@ts-check
 
 const { Sequelize, DataTypes } = require("sequelize");
-const config = require("./config.js");
+const dbConfig = require("./db-config.js");
 //models
 const FlashcardModel = require("./models/flashcard-model.js");
 const UserModel = require("./models/user-model.js");
