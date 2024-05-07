@@ -8,7 +8,7 @@ const express = require("express"),
   fs = require("fs"),
   // modules
   routes = require("./src/routes"),
-  { isDevENV } = require("./src/utils"),
+  { isDevENV } = require("./src/utils/development"),
   // files
   accessLogStream = fs.createWriteStream(path.join(__dirname, "access.log"), {
     flags: "a",
