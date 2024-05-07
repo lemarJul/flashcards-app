@@ -70,11 +70,13 @@ module.exports = (sequelize, DataTypes) => {
         },
       },
     },
+
+    /**
+     * @type {import('sequelize').ModelOptions}
+     */
     {
       timestamps: true,
       updatedAt: false,
     }
   );
 };
-
-
