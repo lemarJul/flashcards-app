@@ -1,4 +1,4 @@
-const { httpStatusCodes } = require("../utils");
+const { httpStatusCodes } = require("../utils/utils");
 const BaseError = require("./base-error");
 
 class Api400Error extends BaseError {
