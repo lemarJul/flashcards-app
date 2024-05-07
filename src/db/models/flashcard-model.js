@@ -14,7 +14,10 @@
  */
 module.exports = (sequelize, DataTypes) => {
   return sequelize.define(
-    "flashcard",
+    "Flashcard",
+    /**
+     * @type {import('sequelize').ModelAttributes}
+     */
     {
       id: {
         type: DataTypes.INTEGER,

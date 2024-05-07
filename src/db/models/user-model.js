@@ -14,7 +14,7 @@ const bcrypt = require("bcrypt");
  * @returns {ModelStatic} User Model
  */
 module.exports = (sequelize, DataTypes) => {
-  return sequelize.define("user", {
+  return sequelize.define("User", {
     id: {
       type: DataTypes.INTEGER,
       primaryKey: true,

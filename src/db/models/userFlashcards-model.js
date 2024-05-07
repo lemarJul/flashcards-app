@@ -14,7 +14,7 @@
  */
 
 module.exports = (sequelize, DataTypes) => {
-  return sequelize.define("user_flashcard", {
+  return sequelize.define("User_flashcard", {
     lastTraining: {
       type: DataTypes.DATE,
       defaultValue: null,
