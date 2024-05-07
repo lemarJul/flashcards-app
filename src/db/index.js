@@ -7,7 +7,7 @@ const FlashcardModel = require("./models/flashcard-model.js");
 const UserModel = require("./models/user-model.js");
 const UserFlashcardsModel = require("./models/userFlashcards-model.js");
 //data
-const flashcardsStarter = require("./flashcards-starter.js");
+const flashcardsStarter = require("../utils/flashcards-starter.json");
 //password hashing
 const bcrypt = require("bcrypt");
 
