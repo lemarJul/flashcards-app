@@ -1,9 +1,4 @@
-// @ts-check
-/**
- * @typedef {import('sequelize').Options} Options
- */
-
-const isDev = process.env.NODE_ENV === "development";
+const isDevENV = process.env.NODE_ENV === "development";
 
 /**
  * Database configuration
@@ -13,18 +8,18 @@ const isDev = process.env.NODE_ENV === "development";
  * @property {String} 2 - password
  * @property {Options} 3 - options
  */
-const config = [
-  isDev ? "mnemoniac" : "",
-  isDev ? "root" : "",
-  isDev ? "" : "",
+const local_config = [
+  "mnemoniac",
+  "root",
+  "",
   {
-    host: isDev ? "localhost" : "",
+    host: "localhost",
     dialect: "mariadb",
     dialectOptions: {
       timezone: "Etc/GMT-2",
     },
-    logging: isDev ? false : true,
+    logging: false,
   },
 ];
 
-module.exports = config;
+module.exports = { isDevENV, local_config };
