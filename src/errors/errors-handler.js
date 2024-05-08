@@ -12,7 +12,6 @@ module.exports = (err, req, res, next) => {
   }
   
   if(err instanceof ValidationError) {
-    console.log("=> error-handler.js: ValidationError");
     return res.status(400).json({ message: err.message, data: err });
   }
 
