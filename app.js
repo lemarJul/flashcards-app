@@ -1,21 +1,21 @@
 //node_modules
-const express = require("express"),
-  bodyParser = require("body-parser"),
-  favicon = require("serve-favicon"),
-  cors = require("cors"),
-  logger = require("morgan"),
-  path = require("path"),
-  fs = require("fs"),
-  // modules
-  routes = require("./src/routes"),
-  { isDevENV } = require("./src/utils/development"),
-  // files
-  accessLogStream = fs.createWriteStream(path.join(__dirname, "access.log"), {
-    flags: "a",
-  }),
-  // config
-  logConfig = isDevENV ? ["dev"] : ["combined", { stream: accessLogStream }]
-  const engine = require("ejs-mate")
+const express = require("express");
+const bodyParser = require("body-parser");
+const favicon = require("serve-favicon");
+const cors = require("cors");
+const logger = require("morgan");
+const path = require("path");
+const fs = require("fs");
+const routes = require("./src/routes");
+const { isDevENV } = require("./src/utils/development");
+const accessLogStream = fs.createWriteStream(
+  path.join(__dirname, "access.log"),
+  { flags: "a" }
+);
+const logConfig = isDevENV
+  ? ["dev"]
+  : ["combined", { stream: accessLogStream }];
+const engine = require("ejs-mate");
 
 const errorsHandler = require("./src/errors/errors-handler");
 const invalidPathHandler = require("./src/errors/invalid-path-handler");
