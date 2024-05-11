@@ -3,7 +3,7 @@
  * @typedef {import('sequelize').Options} Options
  */
 
-const { isDevENV, local_config } = require("../utils/development");
+const { isDevENV, localConfig } = require("../utils/development");
 
 /**
  * Database configuration
@@ -14,7 +14,7 @@ const { isDevENV, local_config } = require("../utils/development");
  * @property {Options} 3 - options
  */
 const config = isDevENV
-  ? local_config
+  ? localConfig
   : [
       "",
       "",
@@ -25,7 +25,7 @@ const config = isDevENV
         dialectOptions: {
           timezone: "Etc/GMT-2",
         },
-        logging: true,
+        logging: console.log,
       },
     ];
 

@@ -8,7 +8,7 @@ const isDevENV = process.env.NODE_ENV === "development";
  * @property {String} 2 - password
  * @property {Options} 3 - options
  */
-const local_config = [
+const localConfig = [
   "mnemoniac",
   "root",
   "",
@@ -22,4 +22,6 @@ const local_config = [
   },
 ];
 
-module.exports = { isDevENV, local_config };
+
+
+module.exports = { isDevENV, localConfig };
