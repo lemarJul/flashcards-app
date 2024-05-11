@@ -5,7 +5,7 @@ const BaseError = require("../../errors/base-error");
 module.exports = async (req, res, next) => {
   try {
     const { token } = req.query;
-    console.log(token);
+
     const user = await User.findOne({ where: { confirmationToken: token } });
 
     if (!user) throw new Api404Error("Invalid token");
