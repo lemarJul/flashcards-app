@@ -2,15 +2,20 @@
 /**
  * @typedef {import('sequelize').Sequelize} Sequelize
  * @typedef {import('sequelize').DataTypes} DataTypes
- * @typedef {import('sequelize').Model} Model
- * @typedef {import('sequelize').ModelStatic<Model>} ModelStatic
+ * @typedef {import('sequelize').ModelDefined<FlashcardAttributes, FlashcardCreationAttributes >} FlashCardModel
+ * @typedef {Object} FlashcardAttributes
+ * @property {Number} id
+ * @property {String} question
+ * @property {String} answer
+ * @property {String} category
+ * @typedef {import('sequelize').Optional<FlashcardAttributes, 'id' | 'category'>} FlashcardCreationAttributes
  */
 
 /**
  *  Flashcard Model - Represents a Flashcard
  * @param {Sequelize} sequelize Sequelize Instance
  * @param {DataTypes} DataTypes DataTypes
- * @returns {ModelStatic} Flashcard Model
+ * @returns {FlashCardModel} Flashcard Model
  */
 module.exports = (sequelize, DataTypes) => {
   return sequelize.define(
@@ -59,6 +64,9 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.STRING,
         allowNull: true,
 
+        /**
+         * @returns {string[]}
+         */
         get() {
           return this.getDataValue("category")?.split(",");
         },
