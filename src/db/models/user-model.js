@@ -4,14 +4,23 @@ const bcrypt = require("bcrypt");
 /**
  * @typedef {import('sequelize').Sequelize} Sequelize
  * @typedef {import('sequelize').DataTypes} DataTypes
- * @typedef {import('sequelize').Model} Model
- * @typedef {import('sequelize').ModelStatic<Model>} ModelStatic
+ * @typedef {import('sequelize').ModelDefined<UserAttributes,UserCreationAttributes>} UserModel
+ * @typedef {Object} UserAttributes
+ * @property {Number} id
+ * @property {String} username
+ * @property {String} password
+ * @property {String} email
+ * @property {Boolean} emailConfirmed
+ * @property {String} confirmationToken
+ * @property {Date} confirmationTokenExpires
+ * @property { "user" | "admin"} role
+ * @typedef {import('sequelize').Optional<UserAttributes, 'id' | 'emailConfirmed' |'confirmationTokenExpires' >} UserCreationAttributes
  */
 
 /**
  * @param {Sequelize} sequelize Sequelize Instance
  * @param {DataTypes} DataTypes DataTypes
- * @returns {ModelStatic} User Model
+ * @returns {UserModel} User
  */
 module.exports = (sequelize, DataTypes) => {
   return sequelize.define("User", {
@@ -90,7 +99,7 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: true,
       defaultValue: () => crypto.randomBytes(20).toString("hex"),
       set(value) {
-        this.setDataValue("confirmationToken", value);
+        this.setDataValue("confirmationToken", /** @type {String} */ (value));
         this.setDataValue(
           "confirmationTokenExpires",
           new Date(Date.now() + 3600000)
