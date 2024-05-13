@@ -15,7 +15,7 @@ module.exports = (resourceName, Model) => {
       next();
     } catch (error) {
       if (!(error instanceof BaseError))
-        error.name = `Error in fetching requested user with id ${req.params.id}`;
+        error.name = `Error in fetching requested resource with id ${id}`;
       next(error);
     }
   };
