@@ -1,6 +1,4 @@
 module.exports = (resourceName, Model) => {
-  console.log("resourceName", resourceName);
-  console.log("Model", Model);
   function create(options) {
     return Model.create(options).catch((error) => {
       error.message = `Error in creating new ${resourceName}: ${error.message}`;
