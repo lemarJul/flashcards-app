@@ -1,13 +1,10 @@
 const { Flashcard } = require("../db");
-const createService = require("./base.service");
+const baseService = require("./base.service")(Flashcard);
 
-const { create, findById, updateById, deleteById, findAndCountAll } =
-  createService("flashcard", Flashcard);
-
-module.exports = {
-  create,
-  findById,
-  findAndCountAll,
-  updateById,
-  deleteById,
-};
+module.exports.name = baseService.name;
+module.exports.create = baseService.create;
+module.exports.findById = baseService.findById;
+module.exports.findAll = baseService.findAll;
+module.exports.findAndCountAll = baseService.findAndCountAll;
+module.exports.updateById = baseService.updateById;
+module.exports.deleteById = baseService.deleteById;
