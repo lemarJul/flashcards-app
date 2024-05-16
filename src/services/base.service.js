@@ -1,35 +1,36 @@
-module.exports = (resourceName, Model) => {
+module.exports = (Model) => {
+  const modelName = Model.name.toLowerCase();
   function create(options) {
     return Model.create(options).catch((error) => {
-      error.message = `Error in creating new ${resourceName}: ${error.message}`;
+      error.message = `Error in creating new ${modelName}: ${error.message}`;
       throw error;
     });
   }
   function findById(id) {
     return Model.findByPk(id).catch((error) => {
-      error.message = `Error in fetching requested ${resourceName} with id ${id}`;
+      error.message = `Error in fetching requested ${modelName} with id ${id}`;
       throw error;
     });
   }
   function findAll(options) {
     return Model.findAll(options).catch((error) => {
-      error.message = `Error in fetching all ${resourceName}`;
+      error.message = `Error in fetching all ${modelName}`;
       throw error;
     });
   }
   function findAndCountAll(options) {
     return Model.findAndCountAll(options).catch((error) => {
-      error.message = `Error in fetching all ${resourceName}`;
+      error.message = `Error in fetching all ${modelName}`;
       throw error;
     });
   }
-  function updateById(id, options) {
-    return Model.update(options, {
+  function updateById(id, data) {
+    return Model.update(data, {
       where: {
         id: id,
       },
     }).catch((error) => {
-      error.message = `Error in updating ${resourceName} with id ${id}`;
+      error.message = `Error in updating ${modelName} with id ${id}`;
       throw error;
     });
   }
@@ -39,7 +40,7 @@ module.exports = (resourceName, Model) => {
         id: id,
       },
     }).catch((error) => {
-      error.message = `Error in deleting ${resourceName} with id ${id}`;
+      error.message = `Error in deleting ${modelName} with id ${id}`;
       throw error;
     });
   }
@@ -48,12 +49,13 @@ module.exports = (resourceName, Model) => {
       where: {},
       truncate: true,
     }).catch((error) => {
-      error.message = `Error in deleting all ${resourceName}`;
+      error.message = `Error in deleting all ${modelName}`;
       throw error;
     });
   }
 
   return {
+    name: modelName,
     create,
     findById,
     findAll,
