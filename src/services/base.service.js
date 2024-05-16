@@ -12,6 +12,16 @@ module.exports = (Model) => {
       throw error;
     });
   }
+  function findByName(name) {
+    return Model.findOne({
+      where: {
+        name: name,
+      },
+    }).catch((error) => {
+      error.message = `Error in fetching requested ${modelName} with name ${name}`;
+      throw error;
+    });
+  }
   function findAll(options) {
     return Model.findAll(options).catch((error) => {
       error.message = `Error in fetching all ${modelName}`;
@@ -58,6 +68,7 @@ module.exports = (Model) => {
     name: modelName,
     create,
     findById,
+    findByName,
     findAll,
     findAndCountAll,
     updateById,
