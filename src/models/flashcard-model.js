@@ -32,10 +32,6 @@ module.exports = (sequelize, DataTypes) => {
       question: {
         type: DataTypes.STRING,
         allowNull: false,
-        unique: {
-          name: "question",
-          msg: "This question already exists",
-        },
         validate: {
           notEmpty: {
             msg: "Please enter a question",
