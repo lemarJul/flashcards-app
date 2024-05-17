@@ -1,4 +1,4 @@
-const { User } = require("../../db").sequelize.models;
+const { User } = require("../../db");
 const resourceName = "user";
 const baseUpdate = require("../base-controller/update.js");
 const updateModifier = require("./update-modifier.js");
