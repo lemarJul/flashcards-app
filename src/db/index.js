@@ -1,64 +1,69 @@
 //@ts-check
 
 const { Sequelize, DataTypes } = require("sequelize");
+const { isDevENV } = require("../utils/development");
 const dbConfig = require("./db-config.js");
-//models
-const FlashcardModel = require("./models/flashcard-model.js");
-const UserModel = require("./models/user-model.js");
-const UserFlashcardsModel = require("./models/userFlashcards-model.js");
-//data
-const flashcardsStarter = require("../utils/flashcards-starter.json");
-//password hashing
-const bcrypt = require("bcrypt");
+const defineFlashcard = require("../models/flashcard-model.js");
+const defineUser = require("../models/user-model.js");
 
-const sequelize = new Sequelize(...config);
+const sequelize = new Sequelize(...dbConfig);
 
-sequelize
-  .authenticate()
-  .then(() => console.log("DB Connection has been established successfully."))
-  .catch((err) => console.error("Unable to connect to the database:", err));
+const Flashcard = defineFlashcard(sequelize, DataTypes);
+const User = defineUser(sequelize, DataTypes);
 
-const Flashcard = FlashcardModel(sequelize, DataTypes);
-const User = UserModel(sequelize, DataTypes);
-//const UserFlashcards = UserFlashcardsModel(sequelize, DataTypes);
-// User.Flashcards = User.belongsToMany(Flashcard, { through: UserFlashcards });
-// Flashcard.Users = Flashcard.belongsToMany(User, { through: UserFlashcards });
+async function init() {
+  try {
+    await sequelize.authenticate();
+    console.log("DB Connection has been established successfully.");
+    await sequelize.sync({ force: isDevENV ? true : false });
+    console.log("DB Sync has been completed.");
+    if (isDevENV) {
+      await reset();
+    }
+    return sequelize;
+  } catch (err) {
+    console.error("Unable to connect to the database:", err);
+    throw err;
+  }
+}
 
 /**
- * Initializes the database tables and creates initial data.
- * @returns {Promise<void>} A promise that resolves when the initialization is complete.
+ * Resets the database by creating an admin user, a regular user, and some flashcards.
+ * @returns {Promise<void>} A promise that resolves when the database reset is complete.
  */
-const initTables = async () => {
+async function reset() {
+  // Create some flashcards
   try {
-    await sequelize.sync({ force: true });
-    console.log("Database synced!");
-
-    const hash = await bcrypt.hash("admin", 10);
-    const userHash = await bcrypt.hash("user", 10);
-
-    const admin = await User.create({
-      username: "admin",
-      password: hash,
-      email: "admin@example.com",
-      role: "admin",
-      emailConfirmed: true,
-    });
-
-    const user = await User.create({
-      username: "user",
-      password: userHash,
-      email: "user@example.com",
-    });
-
-    await Promise.all(
-      flashcardsStarter.map(async (fc, i) => {
-        await Flashcard.create(fc);
-        console.log(`flashcard ${i + 1} created successfully!`);
-      })
-    );
+    const flashcardsStarter = require("../utils/flashcards-starter.json");
+    for (let i = 0; i < flashcardsStarter.length; i++) {
+      await sequelize.models.Flashcard.create(flashcardsStarter[i]);
+      console.log(`flashcard ${i + 1} created successfully!`);
+    }
   } catch (e) {
     console.error(e);
   }
-};
 
-module.exports = { initTables, Flashcard, User, sequelize };
+  // Create an admin user and a regular user
+  try {
+    const adminOpt = {
+      username: "admin",
+      password: "admin",
+      email: "admin@example.com",
+      role: "admin",
+      emailConfirmed: true,
+    };
+    const userOpt = {
+      username: "user",
+      password: "user",
+      email: "user@example.com",
+      role: "user",
+    };
+
+    await sequelize.models.User.create(adminOpt);
+    await sequelize.models.User.create(userOpt);
+  } catch (e) {
+    console.error(e);
+  }
+}
+
+module.exports = { init, Flashcard, User };

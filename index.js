@@ -1,8 +1,11 @@
-const { initTables, sequelize } = require("./src/db");
-const MnemoniacApp = require("./app.js");
+require("dotenv").config();
+const App = require("./app.js");
 const port = process.env.PORT || 3000;
 
-initTables(sequelize)
-  .then(() => {
-   new MnemoniacApp().listen(port, () => console.log(`Listening on port ${port} `));
-  });
+const app = new App();
+
+app.listen(port, () =>
+  console.log(`Listening on port ${port}, url: http://localhost:${port}`)
+);
+
+module.exports = app;

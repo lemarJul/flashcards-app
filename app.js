@@ -1,5 +1,6 @@
 //node_modules
 const express = require("express");
+const sequelize = require("./src/db");
 const bodyParser = require("body-parser");
 const favicon = require("serve-favicon");
 const cors = require("cors");
@@ -16,9 +17,10 @@ const logConfig = isDevENV
   ? ["dev"]
   : ["combined", { stream: accessLogStream }];
 const engine = require("ejs-mate");
-
 const errorsHandler = require("./src/errors/errors-handler");
 const invalidPathHandler = require("./src/errors/invalid-path-handler");
+
+sequelize.init();
 
 module.exports = class MnemoniacApp extends express {
   constructor() {
