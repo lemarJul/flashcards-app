@@ -1,5 +1,5 @@
 const auth = require("../../auth/auth.js");
-const flashcardsController = require("../../controllers/flashcards");
+const flashcardsController = require("../../controllers/flashcards/index.js");
 const router = require("express").Router();
 
 module.exports = (app, controller = flashcardsController) => {

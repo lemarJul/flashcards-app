@@ -7,7 +7,7 @@ const sendConfirmationEmail = require("../../controllers/mail/send-email-confirm
 module.exports = (app, controller = userControllers) => {
   router.param("id", controller.findById);
   router.post("/login", controller.login);
-  router.post("/signup", controller.signup, sendConfirmationEmail);
+  router.post("/signup", controller.signup);
   router
     .route("/users/:id")
     .all(auth, checkAdminOrSelf)

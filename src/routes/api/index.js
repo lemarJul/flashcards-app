@@ -1,6 +1,6 @@
-const loadFlashcardsRoutes = require("./flashcards.js");
-const loadUsersRoutes = require("./users.js");
-const loadCategoriesRoutes = require("./categories.js");
+const loadFlashcardsRoutes = require("./flashcards.routes.js");
+const loadUsersRoutes = require("./users.routes.js");
+const loadCategoriesRoutes = require("./categories.routes.js");
 const router = require("express").Router();
 
 router.get("/", (req, res) => {
