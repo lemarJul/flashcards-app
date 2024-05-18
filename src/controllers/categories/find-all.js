@@ -1,4 +1,4 @@
-const { Flashcard } = require("../../db").sequelize.models;
+const { Flashcard } = require("../../db");
 
 module.exports = async (req, res, next) => {
   try {
