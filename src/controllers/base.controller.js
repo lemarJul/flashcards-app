@@ -70,7 +70,6 @@ module.exports = (service) => {
 
   async function updateById(req, res, next) {
     try {
-      delete req.body.id;
       await service.updateById(req.params.id, req.body);
       const rsc = await service.findById(req.params.id);
       if (!rsc) {
