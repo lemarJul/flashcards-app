@@ -1,6 +1,7 @@
 //@ts-check
 const crypto = require("crypto");
 const bcrypt = require("bcrypt");
+const { noUpdate } = require("./utils.model");
 /**
  * @typedef {import('sequelize').Sequelize} Sequelize
  * @typedef {import('sequelize').DataTypes} DataTypes
@@ -28,6 +29,7 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.INTEGER,
       primaryKey: true,
       autoIncrement: true,
+      set: noUpdate("id"),
     },
     username: {
       type: DataTypes.STRING,
@@ -45,6 +47,7 @@ module.exports = (sequelize, DataTypes) => {
           msg: "Too long. Please enter a username between 0 and 15 characters",
         },
       },
+      set: noUpdate("username"),
     },
     password: {
       type: DataTypes.STRING,

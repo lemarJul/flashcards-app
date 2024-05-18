@@ -1,4 +1,6 @@
 //@ts-check
+const { noUpdate } = require("./utils.model");
+
 /**
  * @typedef {import('sequelize').Sequelize} Sequelize
  * @typedef {import('sequelize').DataTypes} DataTypes
@@ -28,6 +30,7 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.INTEGER,
         primaryKey: true,
         autoIncrement: true,
+        set: noUpdate("id"),
       },
       question: {
         type: DataTypes.STRING,
