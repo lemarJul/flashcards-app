@@ -2,6 +2,7 @@
 const crypto = require("crypto");
 const bcrypt = require("bcrypt");
 const { noUpdate } = require("./utils.model");
+
 /**
  * @typedef {import('sequelize').Sequelize} Sequelize
  * @typedef {import('sequelize').DataTypes} DataTypes
