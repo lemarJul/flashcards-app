@@ -2,7 +2,7 @@
 
 const { Sequelize, DataTypes } = require("sequelize");
 const { isDevENV } = require("../utils/development");
-const dbConfig = require("./db-config.js");
+const dbConfig = require("./db.config.js");
 const defineFlashcard = require("../models/flashcard.model.js");
 const defineUser = require("../models/user.model.js");
 
