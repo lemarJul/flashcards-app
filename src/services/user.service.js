@@ -2,14 +2,6 @@ const { Op } = require("sequelize");
 const { User } = require("../db");
 const baseService = require("./base.service")(User);
 
-module.exports = {
-  create: baseService.create,
-  findByName: baseService.findByName,
-  update: baseService.updateById,
-  deleteById: baseService.deleteById,
-  deleteNotConfirmed,
-};
-
 async function deleteNotConfirmed() {
   try {
     return await User.destroy({
@@ -29,3 +21,12 @@ async function deleteNotConfirmed() {
 function sendEmailConfirmation() {}
 
 function sendPasswordReset() {}
+
+module.exports = {
+  name: User.name,
+  create: baseService.create,
+  findByName: baseService.findByName,
+  update: baseService.updateById,
+  deleteById: baseService.deleteById,
+  deleteNotConfirmed,
+};
