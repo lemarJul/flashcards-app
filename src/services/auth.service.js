@@ -14,10 +14,11 @@ async function login(username, password) {
   if (!passwordMatch) {
     throw new Error("Invalid password");
   }
-  const token = createToken();
+  const token = createToken(user.id);
 
   return token;
 }
+
 // function logout() {}
 // function forgotPassword() {}
 // function resetPassword() {}
@@ -25,14 +26,23 @@ async function login(username, password) {
 // function changePassword() {}
 // function changeEmail() {}
 
-function createToken() {
+function createToken(id) {
   return jwt.sign(
     {
-      id: user.id,
+      id,
     },
     process.env.PRIVATE_KEY,
     {
       expiresIn: "1h",
     }
   );
+}
+
+function verifyToken(token, privateKey) {
+  return new Promise((resolve, reject) => {
+    jwt.verify(token, privateKey, (error, decodedToken) => {
+      if (error) reject(error);
+      resolve(decodedToken);
+    });
+  });
 }
