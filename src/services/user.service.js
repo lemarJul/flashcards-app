@@ -25,7 +25,8 @@ function sendPasswordReset() {}
 module.exports = {
   name: User.name,
   create: baseService.create,
-  findByName: baseService.findByName,
+  findByName: (name) => baseService.findOne({ name }),
+  findOne: baseService.findOne,
   update: baseService.updateById,
   deleteById: baseService.deleteById,
   deleteNotConfirmed,

@@ -12,11 +12,9 @@ module.exports = (Model) => {
       throw error;
     });
   }
-  function findByName(name) {
+  function findOne(whereOpt) {
     return Model.findOne({
-      where: {
-        name: name,
-      },
+      where: whereOpt,
     }).catch((error) => {
       error.message = `Error in fetching requested ${modelName} with name ${name}`;
       throw error;
@@ -68,7 +66,7 @@ module.exports = (Model) => {
     name: modelName,
     create,
     findById,
-    findByName,
+    findOne,
     findAll,
     findAndCountAll,
     updateById,
