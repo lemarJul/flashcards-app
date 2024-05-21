@@ -42,4 +42,22 @@ function register(req, res, next) {
     });
 }
 
-module.exports = { login, register };
+async function confirmUserEmail(req, res, next) {
+  try {
+    if (!req.query.token) throw new Api404Error("No token provided");
+
+    const user = await authService.confirmUserEmail(req.query.token);
+
+    res.json({
+      message: "Email confirmed",
+      data: user,
+    });
+  } catch (err) {
+    if (!(err instanceof BaseError))
+      err.message = `Error in confirming email: ${err.message}`;
+
+    next(err);
+  }
+}
+
+module.exports = { login, register, confirmUserEmail };
