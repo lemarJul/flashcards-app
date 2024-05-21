@@ -5,8 +5,7 @@ const isAdminOrSelf = require("../../middlewares/is-admin-or-self.middleware.js"
 
 module.exports = (app, controller = userControllers) => {
   router.param("id", controller.findById);
-  router.post("/login", controller.login);
-  router.post("/signup", controller.signup);
+
   router
     .route("/users/:id")
     .all(authUser, isAdminOrSelf)
