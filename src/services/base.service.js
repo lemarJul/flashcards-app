@@ -16,7 +16,7 @@ module.exports = (Model) => {
     return Model.findOne({
       where: whereOpt,
     }).catch((error) => {
-      error.message = `Error in fetching requested ${modelName} with name ${name}`;
+      error.message = `Error in fetching requested ${modelName} where ${whereOpt}`;
       throw error;
     });
   }
