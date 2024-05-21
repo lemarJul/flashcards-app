@@ -1,12 +1,14 @@
 const loadFlashcardsRoutes = require("./flashcards.routes.js");
 const loadUsersRoutes = require("./users.routes.js");
 const loadCategoriesRoutes = require("./categories.routes.js");
+const loadAuthRoutes = require("./auth.routes.js");
 const router = require("express").Router();
 
 router.get("/", (req, res) => {
   res.render("pages/api", { stack: ["Node.js", "Express", "Sequelize"] });
 });
 
+loadAuthRoutes(router);
 loadFlashcardsRoutes(router);
 loadUsersRoutes(router);
 loadCategoriesRoutes(router);
