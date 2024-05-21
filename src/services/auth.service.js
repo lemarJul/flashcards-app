@@ -1,3 +1,4 @@
+require("dotenv").config();
 const userService = require("./user.service");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
@@ -50,6 +51,11 @@ function createToken(id) {
   );
 }
 
+async function authUser(token, userId) {
+  const decodedToken = await verifyToken(token, process.env.PRIVATE_KEY);
+  if (decodedToken.id !== userId) throw new Api400Error("Invalid user ID");
+}
+
 function verifyToken(token, privateKey) {
   return new Promise((resolve, reject) => {
     jwt.verify(token, privateKey, (error, decodedToken) => {
@@ -62,4 +68,5 @@ function verifyToken(token, privateKey) {
 module.exports = {
   login,
   register,
+  authUser,
 };
