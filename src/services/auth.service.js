@@ -21,7 +21,14 @@ async function login(email, password) {
   };
 }
 
-
+async function register(username, email, password) {
+  const user = await userService.create({ username, email, password });
+  await userService.sendConfirmationEmail(user);
+  return {
+    token: createToken(user.id),
+    user,
+  };
+}
 
 // function logout() {}
 // function forgotPassword() {}
@@ -53,4 +60,5 @@ function verifyToken(token, privateKey) {
 
 module.exports = {
   login,
+  register,
 };
