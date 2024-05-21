@@ -56,6 +56,18 @@ async function authUser(token, userId) {
   if (decodedToken.id !== userId) throw new Api400Error("Invalid user ID");
 }
 
+async function confirmUserEmail(confirmationToken) {
+  const user = await userService.findOne({ confirmationToken });
+  if (!user) throw new Api404Error("Invalid confirmation token");
+  if (user.emailConfirmed) throw new Api400Error("Email already confirmed");
+  if (user.confirmationTokenExpires < Date.now())
+    throw new Api400Error("Confirmation token has expired");
+
+  user.emailConfirmed = true;
+  await user.save();
+  return user;
+}
+
 function verifyToken(token, privateKey) {
   return new Promise((resolve, reject) => {
     jwt.verify(token, privateKey, (error, decodedToken) => {
@@ -69,4 +81,5 @@ module.exports = {
   login,
   register,
   authUser,
+  confirmUserEmail,
 };
