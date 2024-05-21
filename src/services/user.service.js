@@ -1,6 +1,7 @@
 const { Op } = require("sequelize");
 const { User } = require("../db");
 const baseService = require("./base.service")(User);
+const mailService = require("./mail.service");
 
 async function deleteNotConfirmed() {
   try {
@@ -18,7 +19,7 @@ async function deleteNotConfirmed() {
   }
 }
 
-function sendEmailConfirmation() {}
+
 
 function sendPasswordReset() {}
 
