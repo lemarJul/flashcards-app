@@ -6,9 +6,9 @@ module.exports = (Model) => {
       throw error;
     });
   }
-  function findById(id) {
-    return Model.findByPk(id).catch((error) => {
-      error.message = `Error in fetching requested ${modelName} with id ${id}`;
+  function findByPk(primaryKey) {
+    return Model.findByPk(primaryKey).catch((error) => {
+      error.message = `Error in fetching requested ${modelName} with primary key ${id}`;
       throw error;
     });
   }
@@ -65,7 +65,7 @@ module.exports = (Model) => {
   return {
     name: modelName,
     create,
-    findById,
+    findByPk,
     findOne,
     findAll,
     findAndCountAll,
