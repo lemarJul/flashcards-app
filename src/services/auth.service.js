@@ -2,6 +2,7 @@ const userService = require("./user.service");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const { Api400Error, Api404Error } = require("../errors/api-errors");
+const mailService = require("./mail.service");
 
 // function signup() {}
 
@@ -23,7 +24,7 @@ async function login(email, password) {
 
 async function register(username, email, password) {
   const user = await userService.create({ username, email, password });
-  await userService.sendConfirmationEmail(user);
+  await mailService.sendConfirmationEmail(user);
   return {
     token: createToken(user.id),
     user,
