@@ -1,23 +1,27 @@
 const userService = require("./user.service");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+const { Api400Error, Api404Error } = require("../errors/api-errors");
 
 // function signup() {}
 
-async function login(username, password) {
-  const user = await userService.findByName(username);
+async function login(email, password) {
+  const user = await userService.findOne({ email });
   if (!user)
-    throw new Error(`Requested user with username ${username} doesn't exist`);
+    throw new Api404Error(
+      `Requested user with username ${username} doesn't exist`
+    );
 
   const passwordMatch = await bcrypt.compare(password, user.password);
+  if (!passwordMatch) throw new Api400Error("Invalid password");
 
-  if (!passwordMatch) {
-    throw new Error("Invalid password");
-  }
-  const token = createToken(user.id);
-
-  return token;
+  return {
+    token: createToken(user.id),
+    user,
+  };
 }
+
+
 
 // function logout() {}
 // function forgotPassword() {}
@@ -46,3 +50,7 @@ function verifyToken(token, privateKey) {
     });
   });
 }
+
+module.exports = {
+  login,
+};
