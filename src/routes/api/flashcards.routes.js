@@ -1,4 +1,4 @@
-const auth = require("../../auth/auth.js");
+const authUser = require("../../middlewares/auth-user.middleware.js");
 const flashcardsController = require("../../controllers/flashcards/index.js");
 const router = require("express").Router();
 
@@ -7,12 +7,12 @@ module.exports = (app, controller = flashcardsController) => {
   router
     .route("/flashcards")
     .get(controller.findAll)
-    .post(auth, controller.create);
+    .post(authUser, controller.create);
   router
     .route("/flashcards/:id")
     .get(controller.sendLoadedResource)
-    .delete(auth, controller.deleteById)
-    .put(auth, controller.updateById);
+    .delete(authUser, controller.deleteById)
+    .put(authUser, controller.updateById);
 
   app.use(router);
 };

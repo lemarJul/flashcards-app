@@ -1,8 +1,7 @@
 const userControllers = require("../../controllers/users/index.js");
 const router = require("express").Router();
-const auth = require("../../auth/auth.js");
-const checkAdminOrSelf = require("../../auth/check-admin-or-self.js");
-const sendConfirmationEmail = require("../../controllers/mail/send-email-confirmation.js");
+const authUser = require("../../middlewares/auth-user.middleware.js");
+const isAdminOrSelf = require("../../middlewares/is-admin-or-self.middleware.js");
 
 module.exports = (app, controller = userControllers) => {
   router.param("id", controller.findById);
@@ -10,7 +9,7 @@ module.exports = (app, controller = userControllers) => {
   router.post("/signup", controller.signup);
   router
     .route("/users/:id")
-    .all(auth, checkAdminOrSelf)
+    .all(authUser, isAdminOrSelf)
     .get(controller.sendLoadedResource)
     .delete(controller.deleteById)
     .put(controller.updateById);
