@@ -45,22 +45,10 @@ async function reset() {
 
   // Create an admin user and a regular user
   try {
-    const adminOpt = {
-      username: "admin",
-      password: "admin",
-      email: "admin@example.com",
-      role: "admin",
-      emailConfirmed: true,
-    };
-    const userOpt = {
-      username: "user",
-      password: "user",
-      email: "user@example.com",
-      role: "user",
-    };
-
-    await sequelize.models.User.create(adminOpt);
-    await sequelize.models.User.create(userOpt);
+    const userData = require("../utils/users.data.js");
+    
+    await sequelize.models.User.create(userData.admin);
+    await sequelize.models.User.create(userData.user);
   } catch (e) {
     console.error(e);
   }
