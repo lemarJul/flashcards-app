@@ -11,12 +11,12 @@ module.exports = (Model) => {
   }
   function findByPk(primaryKey) {
     return Model.findByPk(primaryKey)
-      .then((user) => {
-        if (!user)
+      .then((resource) => {
+        if (!resource)
           throw new Api404Error(
             `requested ${modelName} with primary key ${primaryKey} not found`
           );
-        return user;
+        return resource;
       })
       .catch((error) => {
         if (!(error instanceof BaseError))
@@ -28,12 +28,12 @@ module.exports = (Model) => {
     return Model.findOne({
       where: whereOpt,
     })
-      .then((user) => {
-        if (!user)
+      .then((ressource) => {
+        if (!ressource)
           throw new Api404Error(
             `requested ${modelName} where ${whereOpt} not found`
           );
-        return user;
+        return ressource;
       })
       .catch((error) => {
         if (!(error instanceof BaseError))
