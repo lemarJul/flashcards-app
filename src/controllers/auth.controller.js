@@ -44,11 +44,11 @@ function register(req, res, next) {
 
 async function confirmUserEmail(req, res, next) {
   try {
-    if (!req.query.token) throw new Api404Error("No token provided");
+    if (!req.query.token) throw new Api400Error("No token provided");
 
     const user = await authService.confirmUserEmail(req.query.token);
 
-    res.json({
+    res.json({  
       message: "Email confirmed",
       data: user,
     });
