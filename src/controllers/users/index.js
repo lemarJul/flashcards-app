@@ -8,8 +8,6 @@ const userService = require("../../services/user.service");
 const baseController = require("../base.controller.js")(userService);
 
 module.exports = {
-  signup: require("./signup.js"),
-  login: require("./login.js"),
   findById: require("../base-controller/find-by-pk.js")(resourceName, User),
   updateById: baseUpdate(resourceName, User),
   deleteById: require("../base-controller/delete-by-pk.js")(resourceName, User),
