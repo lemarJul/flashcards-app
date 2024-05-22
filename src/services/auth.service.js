@@ -51,9 +51,10 @@ function createToken(id) {
   );
 }
 
-async function authUser(token, userId) {
+async function authUser(token) {
   const decodedToken = await verifyToken(token, process.env.PRIVATE_KEY);
-  if (decodedToken.id !== userId) throw new Api400Error("Invalid user ID");
+  const user = await userService.findById(decodedToken.id);
+  return user;
 }
 
 async function confirmUserEmail(confirmationToken) {
