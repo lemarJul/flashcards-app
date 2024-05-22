@@ -1,8 +1,7 @@
-const categoriesController = require('../../controllers/categories');
-const rsc = '/categories';
-const rscId = rsc + '/:id';
+const categoriesController = require("../../controllers/categories");
+const router = require("express").Router();
 
-module.exports = (app, controller = categoriesController) => {
-    
-    app.get(rsc, controller.findAll);
-}
+const basePath = "/categories";
+router.get("/", categoriesController.findAll);
+
+module.exports = (app) => app.use(basePath, router);

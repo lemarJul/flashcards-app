@@ -1,17 +1,17 @@
-const userControllers = require("../../controllers/users/index.js");
+const userController = require("../../controllers/users/index.js");
+const {
+  attachUserToRequest,
+} = require("../../middlewares/users.middleware.js");
+const auth = require("../../middlewares/auth-user.middleware.js");
 const router = require("express").Router();
-const authUser = require("../../middlewares/auth-user.middleware.js");
-const isAdminOrSelf = require("../../middlewares/is-admin-or-self.middleware.js");
 
-module.exports = (app, controller = userControllers) => {
-  router.param("id", controller.findById);
+const basePath = "/users";
+router.param("id", attachUserToRequest);
+router
+  .route("/:id")
+  .all(auth.selfOrAdmin)
+  .get(userController.sendLoadedResource)
+  .delete(userController.deleteById)
+  .put(userController.updateById);
 
-  router
-    .route("/users/:id")
-    .all(authUser, isAdminOrSelf)
-    .get(controller.sendLoadedResource)
-    .delete(controller.deleteById)
-    .put(controller.updateById);
-
-  app.use(router);
-};
+module.exports = (app) => app.use(basePath, router);
