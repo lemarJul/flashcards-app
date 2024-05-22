@@ -57,16 +57,21 @@ async function authUser(token) {
   return user;
 }
 
-async function confirmUserEmail(confirmationToken) {
-  const user = await userService.findOne({ confirmationToken });
-  if (!user) throw new Api404Error("Invalid confirmation token");
-  if (user.emailConfirmed) throw new Api400Error("Email already confirmed");
-  if (user.confirmationTokenExpires < Date.now())
-    throw new Api400Error("Confirmation token has expired");
 
-  user.emailConfirmed = true;
-  await user.save();
-  return user;
+async function confirmUserEmail(confirmationToken) {
+  try {
+    const user = await userService.findOne({ confirmationToken });
+    if (user.emailConfirmed) throw new Api400Error("Email already confirmed");
+    if (user.confirmationTokenExpires < Date.now())
+      throw new Api400Error("Confirmation token has expired");
+
+    user.emailConfirmed = true;
+    await user.save();
+    return user;
+  } catch (error) {
+    if (error instanceof Api404Error) error.name = "Invalid confirmation token"; // in case user not found
+    throw error;
+  }
 }
 
 function verifyToken(token, privateKey) {
