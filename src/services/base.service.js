@@ -1,3 +1,6 @@
+const { BaseError } = require("sequelize");
+const { Api404Error } = require("../errors/api-errors");
+
 module.exports = (Model) => {
   const modelName = Model.name.toLowerCase();
   function create(options) {
@@ -7,18 +10,36 @@ module.exports = (Model) => {
     });
   }
   function findByPk(primaryKey) {
-    return Model.findByPk(primaryKey).catch((error) => {
-      error.message = `Error in fetching requested ${modelName} with primary key ${id}`;
-      throw error;
-    });
+    return Model.findByPk(primaryKey)
+      .then((user) => {
+        if (!user)
+          throw new Api404Error(
+            `requested ${modelName} with primary key ${primaryKey} not found`
+          );
+        return user;
+      })
+      .catch((error) => {
+        if (!(error instanceof BaseError))
+          error.message = `Error in fetching requested ${modelName} with primary key ${id}`;
+        throw error;
+      });
   }
   function findOne(whereOpt) {
     return Model.findOne({
       where: whereOpt,
-    }).catch((error) => {
-      error.message = `Error in fetching requested ${modelName} where ${whereOpt}`;
-      throw error;
-    });
+    })
+      .then((user) => {
+        if (!user)
+          throw new Api404Error(
+            `requested ${modelName} where ${whereOpt} not found`
+          );
+        return user;
+      })
+      .catch((error) => {
+        if (!(error instanceof BaseError))
+          error.message = `Error in fetching requested ${modelName} where ${whereOpt}`;
+        throw error;
+      });
   }
   function findAll(options) {
     return Model.findAll(options).catch((error) => {
