@@ -2,19 +2,18 @@ const { Api404Error } = require("../errors/api-errors");
 const { SqlError } = require("mariadb");
 
 module.exports = (service) => {
-  function create(req, res, next) {
-    service
-      .create(req.body)
-      .then((rsc) => {
-        res.status(201).json({
-          message: `${service.name} created successfully`,
-          data: rsc,
-        });
-      })
-      .catch((err) => {
-        err.message = `Error in creating new ${service.name}: ${err.message}`;
-        next(err);
+  async function create(req, res, next) {
+    try {
+      const rsc = await service.create(req.body);
+
+      res.status(201).json({
+        message: `${service.name} created successfully`,
+        data: rsc,
       });
+    } catch (err) {
+      err.message = `Error in creating new ${service.name}: ${err.message}`;
+      next(err);
+    }
   }
 
   async function findById(req, res, next, id) {
@@ -67,11 +66,6 @@ module.exports = (service) => {
     try {
       await service.updateById(req.params.id, req.body);
       const rsc = await service.findById(req.params.id);
-      if (!rsc) {
-        throw new Api404Error(
-          `Requested ${service.name} with id ${req.params.id} doesn't exist.`
-        );
-      }
       res.json({
         message: `${service.name} with id ${req.params.id} updated successfully`,
         data: rsc,
@@ -81,15 +75,12 @@ module.exports = (service) => {
       next(error);
     }
   }
+
   async function deleteById(req, res, next) {
     try {
       const rsc = req[service.name] || (await service.findById(req.params.id));
-      if (!rsc) {
-        throw new Api404Error(
-          `Requested ${service.name} with id ${req.params.id} doesn't exist.`
-        );
-      }
       await service.deleteById(req.params.id);
+
       res.json({
         message: `${service.name} with id ${req.params.id} deleted successfully`,
         data: rsc,
@@ -105,6 +96,7 @@ module.exports = (service) => {
       data: req[service.name],
     });
   }
+
 
   return {
     create,
