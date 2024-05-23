@@ -20,7 +20,7 @@ module.exports = (Model) => {
       })
       .catch((error) => {
         if (!(error instanceof BaseError))
-          error.message = `Error in fetching requested ${modelName} with primary key ${id}`;
+          error.message = `Error in fetching requested ${modelName} with primary key ${primaryKey}`;
         throw error;
       });
   }
