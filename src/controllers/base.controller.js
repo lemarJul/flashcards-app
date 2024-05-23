@@ -18,7 +18,7 @@ module.exports = (service) => {
 
   async function findById(req, res, next, id) {
     try {
-      const rsc = req[service.name] || (await service.findById(id));
+      const rsc = preFetchedRsc(req) || (await service.findById(id));
 
       return res.status(200).json({
         message: `${service.name} with id ${id} successfully fetched.`,
@@ -78,7 +78,7 @@ module.exports = (service) => {
 
   async function deleteById(req, res, next) {
     try {
-      const rsc = req[service.name] || (await service.findById(req.params.id));
+      const rsc = preFetchedRsc(req) || (await service.findById(req.params.id));
       await service.deleteById(req.params.id);
 
       res.json({
@@ -90,6 +90,7 @@ module.exports = (service) => {
       next(error);
     }
   }
+
   function jsonReply(req, res, next) {
     res.json({
       message: "Resource loaded successfully",
@@ -97,6 +98,9 @@ module.exports = (service) => {
     });
   }
 
+  function preFetchedRsc(req) {
+    return req[service.name];
+  }
 
   return {
     create,
