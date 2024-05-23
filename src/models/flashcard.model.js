@@ -30,7 +30,6 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.INTEGER,
         primaryKey: true,
         autoIncrement: true,
-        set: noUpdate("id"),
       },
       question: {
         type: DataTypes.STRING,
