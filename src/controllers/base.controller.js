@@ -91,13 +91,6 @@ module.exports = (service) => {
     }
   }
 
-  function jsonReply(req, res, next) {
-    res.json({
-      message: "Resource loaded successfully",
-      data: req[service.name],
-    });
-  }
-
   function preFetchedRsc(req) {
     return req[service.name];
   }
