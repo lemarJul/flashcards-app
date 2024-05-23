@@ -21,7 +21,7 @@ async function deleteNotConfirmed() {
 function sendPasswordReset() {}
 
 module.exports = {
-  name: User.name,
+  name: baseService.name,
   create: baseService.create,
   findById: baseService.findByPk,
   findByName: (name) => baseService.findOne({ name }),
