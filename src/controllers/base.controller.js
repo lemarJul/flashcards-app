@@ -17,19 +17,17 @@ module.exports = (service) => {
       });
   }
 
-  function findById(req, res, next, id) {
+  async function findById(req, res, next, id) {
+    try {
+      const rsc = req[service.name] || (await service.findById(id));
 
-    service
-      .findById(id)
-      .then((rsc) => {
-        return res.status(200).json({
-          message: `${service.name} with id ${id} successfully fetched.`,
-          data: rsc,
-        });
-      })
-      .catch((err) => {
-        next(err);
+      return res.status(200).json({
+        message: `${service.name} with id ${id} successfully fetched.`,
+        data: rsc,
       });
+    } catch (err) {
+      next(err);
+    }
   }
 
   async function findAll(req, res, next) {
