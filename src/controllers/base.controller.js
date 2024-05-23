@@ -6,7 +6,6 @@ module.exports = (service) => {
     service
       .create(req.body)
       .then((rsc) => {
-        req[service.name] = rsc;
         res.status(201).json({
           message: `${service.name} created successfully`,
           data: rsc,
@@ -27,8 +26,10 @@ module.exports = (service) => {
             `Requested ${service.name} with id ${id} doesn't exist.`
           );
         }
-        req[service.name] = rsc;
-        next();
+        return res.status(200).json({
+          message: `${service.name} with id ${id} successfully fetched.`,
+          data: rsc,
+        });
       })
       .catch((err) => {
         next(err);
