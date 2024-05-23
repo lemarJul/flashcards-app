@@ -18,14 +18,10 @@ module.exports = (service) => {
   }
 
   function findById(req, res, next, id) {
+
     service
       .findById(id)
       .then((rsc) => {
-        if (!rsc) {
-          throw new Api404Error(
-            `Requested ${service.name} with id ${id} doesn't exist.`
-          );
-        }
         return res.status(200).json({
           message: `${service.name} with id ${id} successfully fetched.`,
           data: rsc,
