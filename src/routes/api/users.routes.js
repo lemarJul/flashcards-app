@@ -1,8 +1,8 @@
 const userController = require("../../controllers/users/index.js");
 const {
   attachUserToRequest,
-} = require("../../middlewares/users.middleware.js");
-const auth = require("../../middlewares/auth.middleware.js");
+} = require("../../middlewares/users.middlewares.js");
+const auth = require("../../middlewares/auth.middlewares.js");
 const router = require("express").Router();
 
 const basePath = "/users";
