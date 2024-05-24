@@ -11,7 +11,7 @@ router.post("/", flashcardsController.create);
 router.param("id", attachFlashcardToRequest);
 router
   .route("/:id")
-  .get(flashcardsController.sendLoadedResource)
+  .get(flashcardsController.findById)
   .delete(flashcardsController.deleteById)
   .put(flashcardsController.updateById);
 
