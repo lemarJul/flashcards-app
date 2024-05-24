@@ -3,16 +3,16 @@ const auth = require("../../middlewares/auth.middlewares.js");
 const {
   attachFlashcardToRequest,
 } = require("../../middlewares/flashcards.middlewares.js");
-const router = require("express").Router();
 
-const basePath = "/flashcards";
-router.param("id", attachFlashcardToRequest);
+const router = require("express").Router();
+router.all("*", auth.anyUser);
 router.get("/", flashcardsController.findAll);
-router.post("/", auth.anyUser, flashcardsController.create);
+router.post("/", flashcardsController.create);
+router.param("id", attachFlashcardToRequest);
 router
   .route("/:id")
   .get(flashcardsController.sendLoadedResource)
-  .delete(auth.anyUser, flashcardsController.deleteById)
-  .put(auth.anyUser, flashcardsController.updateById);
+  .delete(flashcardsController.deleteById)
+  .put(flashcardsController.updateById);
 
-module.exports = (app) => app.use(basePath, router);
+module.exports = (app) => app.use("/flashcards", router);
