@@ -16,12 +16,12 @@ module.exports = (service) => {
     }
   }
 
-  async function findById(req, res, next, id) {
+  async function findById(req, res, next) {
     try {
-      const rsc = preFetchedRsc(req) || (await service.findById(id));
+      const rsc = preFetchedRsc(req) || (await service.findById(req.params.id));
 
       return res.status(200).json({
-        message: `${service.name} with id ${id} successfully fetched.`,
+        message: `${service.name} with id ${req.params.id} successfully fetched.`,
         data: rsc,
       });
     } catch (err) {
