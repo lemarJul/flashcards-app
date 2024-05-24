@@ -8,7 +8,4 @@ module.exports = {
   updateById: controller.updateById,
   deleteById: controller.deleteById,
   findById: controller.findById,
-  sendLoadedResource: require("../base-controller/send-loaded-resource.js")(
-    service.name
-  ),
 };
