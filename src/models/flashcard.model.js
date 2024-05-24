@@ -1,5 +1,4 @@
 //@ts-check
-const { noUpdate } = require("./utils.model");
 
 /**
  * @typedef {import('sequelize').Sequelize} Sequelize
