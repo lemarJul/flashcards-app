@@ -8,8 +8,22 @@ const defineUser = require("../models/user.model.js");
 
 const sequelize = new Sequelize(...dbConfig);
 
-const Flashcard = defineFlashcard(sequelize, DataTypes);
 const User = defineUser(sequelize, DataTypes);
+const Flashcard = defineFlashcard(sequelize, DataTypes);
+// user has many flashcards
+User.hasMany(Flashcard, {
+  foreignKey: {
+    name: "userId",
+    allowNull: false,
+  },
+  onDelete: "CASCADE",
+});
+Flashcard.belongsTo(User, {
+  foreignKey: {
+    name: "userId",
+    allowNull: false,
+  },
+});
 
 async function init() {
   try {
@@ -32,6 +46,16 @@ async function init() {
  * @returns {Promise<void>} A promise that resolves when the database reset is complete.
  */
 async function reset() {
+  // Create an admin user and a regular user
+  try {
+    const userData = require("../utils/users.data.js");
+
+    await sequelize.models.User.create(userData.admin);
+    await sequelize.models.User.create(userData.user);
+  } catch (e) {
+    console.error(e);
+  }
+
   // Create some flashcards
   try {
     const flashcardsStarter = require("../utils/flashcards-starter.json");
@@ -39,16 +63,6 @@ async function reset() {
       await sequelize.models.Flashcard.create(flashcardsStarter[i]);
       console.log(`flashcard ${i + 1} created successfully!`);
     }
-  } catch (e) {
-    console.error(e);
-  }
-
-  // Create an admin user and a regular user
-  try {
-    const userData = require("../utils/users.data.js");
-    
-    await sequelize.models.User.create(userData.admin);
-    await sequelize.models.User.create(userData.user);
   } catch (e) {
     console.error(e);
   }
