@@ -8,6 +8,7 @@ const router = require("express").Router();
 router.all("*", auth.anyUser);
 router.get("/", flashcardsController.findAll);
 router.post("/", flashcardsController.create);
+router.post("/study", flashcardsController.processStudiedFlashcards);
 router.param("id", attachFlashcardToRequest);
 router
   .route("/:id")
