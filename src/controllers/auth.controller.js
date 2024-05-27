@@ -1,12 +1,11 @@
 const { Api400Error, Api404Error } = require("../errors/api-errors.js");
 const { BaseError } = require("sequelize");
 const authService = require("../services/auth.service.js");
+const { requireDefinedProps } = require("./utils.js");
 
 function login(req, res, next) {
-  const { email, password } = req.body;
-  if (!email || !password) {
-    throw new Api400Error("Please provide an email and a password");
-  }
+  const { email, password } = requireDefinedProps(req.body);
+
   authService
     .login(email, password)
     .then(({ token, user }) => {
@@ -23,10 +22,8 @@ function login(req, res, next) {
 }
 
 function register(req, res, next) {
-  const { username, email, password } = req.body;
-  if (!username || !email || !password) {
-    throw new Api400Error("Please provide a username, an email and a password");
-  }
+  const { username, email, password } = requireDefinedProps(req.body);
+
   authService
     .register(username, email, password)
     .then(({ token, user }) => {
@@ -44,11 +41,11 @@ function register(req, res, next) {
 
 async function confirmUserEmail(req, res, next) {
   try {
-    if (!req.query.token) throw new Api400Error("No token provided");
+    const { token } = requireDefinedProps(req.query);
 
-    const user = await authService.confirmUserEmail(req.query.token);
+    const user = await authService.confirmUserEmail(token);
 
-    res.json({  
+    res.json({
       message: "Email confirmed",
       data: user,
     });
