@@ -1,5 +1,5 @@
 //@ts-check
-
+const { Model } = require("sequelize");
 /**
  * @typedef {import('sequelize').Sequelize} Sequelize
  * @typedef {import('sequelize').DataTypes} DataTypes
@@ -12,6 +12,64 @@
  * @typedef {import('sequelize').Optional<FlashcardAttributes, 'id' | 'category'>} FlashcardCreationAttributes
  */
 
+class Flashcard extends Model {
+  static MAX_STEP = 7;
+  static MIN_STEP = 0;
+
+  static associate(models) {
+    Flashcard.belongsTo(models.User, {
+      foreignKey: {
+        name: "userId",
+        allowNull: false,
+      },
+    });
+  }
+  stepUp() {
+    if (this.step < Flashcard.MAX_STEP) {
+      this.step++;
+    }
+    this.defineNextTrainingDate();
+  }
+  stepDown() {
+    // never go below 1 after the first step has been completed
+    if (this.step > 1) {
+      this.step--;
+    }
+    this.defineNextTrainingDate();
+  }
+  defineNextTrainingDate() {
+    const now = new Date();
+    switch (this.step) {
+      case 0:
+        this.nextTrainingDate = now;
+        break;
+      case 1:
+        this.nextTrainingDate = new Date(now.setDate(now.getDate() + 1));
+        break;
+      case 2:
+        this.nextTrainingDate = new Date(now.setDate(now.getDate() + 3));
+        break;
+      case 3:
+        this.nextTrainingDate = new Date(now.setDate(now.getDate() + 7));
+        break;
+      case 4:
+        this.nextTrainingDate = new Date(now.setDate(now.getDate() + 14));
+        break;
+      case 5:
+        this.nextTrainingDate = new Date(now.setDate(now.getDate() + 30));
+        break;
+      case 6:
+        this.nextTrainingDate = new Date(now.setDate(now.getDate() + 60));
+        break;
+      case 7:
+        this.nextTrainingDate = new Date(now.setDate(now.getDate() + 120));
+      default:
+        break;
+    }
+  }
+}
+
+
 /**
  *  Flashcard Model - Represents a Flashcard
  * @param {Sequelize} sequelize Sequelize Instance
@@ -19,8 +77,7 @@
  * @returns {FlashCardModel} Flashcard Model
  */
 module.exports = (sequelize, DataTypes) => {
-  return sequelize.define(
-    "Flashcard",
+  return Flashcard.init(
     /**
      * @type {import('sequelize').ModelAttributes}
      */
@@ -74,14 +131,39 @@ module.exports = (sequelize, DataTypes) => {
           this.setDataValue("category", category.join());
         },
       },
+
+      step: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        defaultValue: 0,
+        validate: {
+          min: {
+            args: [Flashcard.MIN_STEP],
+            msg: "Step must be greater than or equal to 0",
+          },
+          max: {
+            args: [Flashcard.MAX_STEP],
+            msg: "Step must be less than or equal to 7",
+          },
+        },
+      },
+
+      nextTrainingDate: {
+        type: DataTypes.DATE,
+        allowNull: false,
+        defaultValue: new Date(),
+      },
     },
 
     /**
      * @type {import('sequelize').ModelOptions}
      */
     {
+      sequelize,
+      modelName: "Flashcard",
       timestamps: true,
       updatedAt: false,
     }
   );
 };
+
