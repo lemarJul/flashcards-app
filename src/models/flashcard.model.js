@@ -24,20 +24,22 @@ class Flashcard extends Model {
       },
     });
   }
-  stepUp() {
-    if (this.step < Flashcard.MAX_STEP) {
-      this.step++;
-    }
-    this.defineNextTrainingDate();
+  async study(isSuccessful) {
+    isSuccessful ? this.#stepUp() : this.#stepDown();
+
+    this.#defineNextTrainingDate();
+    return await this.save();
   }
-  stepDown() {
+
+  #stepUp() {
+    if (this.step < Flashcard.MAX_STEP) this.step++;
+  }
+  #stepDown() {
     // never go below 1 after the first step has been completed
-    if (this.step > 1) {
-      this.step--;
-    }
-    this.defineNextTrainingDate();
+    if (this.step > 1) this.step--;
   }
-  defineNextTrainingDate() {
+
+  #defineNextTrainingDate() {
     const now = new Date();
     switch (this.step) {
       case 0:
@@ -68,7 +70,6 @@ class Flashcard extends Model {
     }
   }
 }
-
 
 /**
  *  Flashcard Model - Represents a Flashcard
@@ -166,4 +167,3 @@ module.exports = (sequelize, DataTypes) => {
     }
   );
 };
-
