@@ -1,5 +1,9 @@
 const router = require("express").Router();
 
+router.get("/ping", (req, res) => {
+  res.status(200).json({ message: "pong" });
+});
+
 router.get("/", (req, res) => {
   res.render("pages/api", { stack: ["Node.js", "Express", "Sequelize"] });
 });
