@@ -44,7 +44,7 @@ function createToken(id) {
     {
       id,
     },
-    process.env.PRIVATE_KEY,
+    process.env.JWT_SECRET,
     {
       expiresIn: "1h",
     }
@@ -52,11 +52,10 @@ function createToken(id) {
 }
 
 async function authUser(token) {
-  const decodedToken = await verifyToken(token, process.env.PRIVATE_KEY);
+  const decodedToken = await verifyToken(token, process.env.JWT_SECRET);
   const user = await userService.findById(decodedToken.id);
   return user;
 }
-
 
 async function confirmUserEmail(confirmationToken) {
   try {

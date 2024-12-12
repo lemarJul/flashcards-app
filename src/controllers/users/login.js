@@ -34,7 +34,7 @@ module.exports = async (req, res, next) => {
         {
           id: user.id,
         },
-        process.env.PRIVATE_KEY,
+        process.env.JWT_SECRET,
         {
           expiresIn: "1h",
         }
