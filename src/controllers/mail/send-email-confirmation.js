@@ -1,5 +1,4 @@
 const nodemailer = require("nodemailer");
-require("dotenv").config();
 
 module.exports = async function sendConfirmationEmail(req, res, next) {
   let baseUrl = req.protocol + "://" + req.get("host");
