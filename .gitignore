@@ -1,0 +1,15 @@
+.env
+logs/
+tests/
+node_modules/
+*.log
+*test.js
+
+# Configure files
+jest.config.json
+package-lock.json
+nodemon.json
+yarn.lock
+#Mac OS
+.DS_Store
+
