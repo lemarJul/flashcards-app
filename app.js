@@ -1,14 +1,21 @@
 //node_modules
 const express = require("express");
-const sequelize = require("./src/db");
 const bodyParser = require("body-parser");
 const favicon = require("serve-favicon");
 const cors = require("cors");
 const logger = require("morgan");
 const path = require("path");
 const fs = require("fs");
+const engine = require("ejs-mate");
+
+// Project modules
+const { connectDB } = require("./src/db");
 const routes = require("./src/routes");
-const { isDevENV } = require("./src/utils/development");
+const { isDevENV } = require("./src/utils/utils");
+const errorsHandler = require("./src/errors/errors-handler");
+const invalidPathHandler = require("./src/errors/invalid-path-handler");
+
+// Configuration
 const accessLogStream = fs.createWriteStream(
   path.join(__dirname, "access.log"),
   { flags: "a" }
@@ -16,11 +23,8 @@ const accessLogStream = fs.createWriteStream(
 const logConfig = isDevENV
   ? ["dev"]
   : ["combined", { stream: accessLogStream }];
-const engine = require("ejs-mate");
-const errorsHandler = require("./src/errors/errors-handler");
-const invalidPathHandler = require("./src/errors/invalid-path-handler");
 
-sequelize.init();
+connectDB();
 
 module.exports = class MnemoniacApp extends express {
   constructor() {

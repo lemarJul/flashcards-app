@@ -1,8 +1,6 @@
 const fs = require("fs");
 const path = require("path");
 
-
-
 module.exports.requireAllFilesInDirectory = function (directory) {
   const files = fs.readdirSync(directory);
   const modules = {};
@@ -28,5 +26,7 @@ module.exports.httpStatusCodes = {
   NOT_FOUND: 404,
   INTERNAL_SERVER_ERROR: 500,
 };
+
+module.exports.isDevENV = process.env.NODE_ENV === "development";
 
 module.exports.parseHyphenatedString = (str) => str.replace(/-/g, " ");
