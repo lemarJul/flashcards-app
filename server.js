@@ -1,4 +1,7 @@
-require("dotenv").config();
+const dotenv = require('dotenv')
+const dotenvExpand = require('dotenv-expand')
+dotenvExpand.expand(dotenv.config())
+
 const port = process.env.PORT || 3000;
 const App = require("./app.js");
 
