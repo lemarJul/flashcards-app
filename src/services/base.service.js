@@ -55,9 +55,7 @@ module.exports = (Model) => {
   }
   function updateById(id, data) {
     return Model.update(data, {
-      where: {
-        id: id,
-      },
+      where: { id },
     }).catch((error) => {
       error.message = `Error in updating ${modelName} with id ${id}`;
       throw error;
@@ -65,9 +63,7 @@ module.exports = (Model) => {
   }
   function deleteById(id) {
     return Model.destroy({
-      where: {
-        id: id,
-      },
+      where: { id },
     }).catch((error) => {
       error.message = `Error in deleting ${modelName} with id ${id}`;
       throw error;
