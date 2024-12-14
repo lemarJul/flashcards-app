@@ -1,78 +1,43 @@
 //@ts-check
 const { Model } = require("sequelize");
+
 /**
  * @typedef {import('sequelize').Sequelize} Sequelize
  * @typedef {import('sequelize').DataTypes} DataTypes
  * @typedef {import('sequelize').ModelDefined<FlashcardAttributes, FlashcardCreationAttributes >} FlashCardModel
  * @typedef {Object} FlashcardAttributes
- * @property {Number} id
- * @property {String} question
- * @property {String} answer
- * @property {String} category
+ * @property {number} id
+ * @property {string} question
+ * @property {string} answer
+ * @property {string} category
  * @typedef {import('sequelize').Optional<FlashcardAttributes, 'id' | 'category'>} FlashcardCreationAttributes
  */
 
 class Flashcard extends Model {
-  static MAX_STEP = 7;
   static MIN_STEP = 0;
+  static MAX_STEP = 6;
+  static DAYS_TO_ADD = [1, 3, 7, 14, 30, 60, 120];
 
-  static associate(models) {
-    Flashcard.belongsTo(models.User, {
-      foreignKey: {
-        name: "userId",
-        allowNull: false,
-      },
-    });
-  }
-  async study(isSuccessful) {
-    isSuccessful ? this.#stepUp() : this.#stepDown();
-
-    this.#defineNextTrainingDate();
+  async review(isSuccessful = false) {
+    // @ts-ignore
+    this.#scheduleNextReview(isSuccessful ? ++this.step : --this.step);
     return await this.save();
   }
 
-  #stepUp() {
-    if (this.step < Flashcard.MAX_STEP) this.step++;
-  }
-  #stepDown() {
-    // never go below 1 after the first step has been completed
-    if (this.step > 1) this.step--;
-  }
-
-  #defineNextTrainingDate() {
-    const now = new Date();
-    switch (this.step) {
-      case 0:
-        this.nextTrainingDate = now;
-        break;
-      case 1:
-        this.nextTrainingDate = new Date(now.setDate(now.getDate() + 1));
-        break;
-      case 2:
-        this.nextTrainingDate = new Date(now.setDate(now.getDate() + 3));
-        break;
-      case 3:
-        this.nextTrainingDate = new Date(now.setDate(now.getDate() + 7));
-        break;
-      case 4:
-        this.nextTrainingDate = new Date(now.setDate(now.getDate() + 14));
-        break;
-      case 5:
-        this.nextTrainingDate = new Date(now.setDate(now.getDate() + 30));
-        break;
-      case 6:
-        this.nextTrainingDate = new Date(now.setDate(now.getDate() + 60));
-        break;
-      case 7:
-        this.nextTrainingDate = new Date(now.setDate(now.getDate() + 120));
-      default:
-        break;
-    }
+  /**
+   * Calculates and sets the next training date based on the provided step.
+   * @param {number} step
+   */
+  #scheduleNextReview(step) {
+    const MILLS_IN_A_DAY = 86400000;
+    this.trainingDate = new Date(
+      Date.now() + Flashcard.DAYS_TO_ADD[step] * MILLS_IN_A_DAY
+    );
   }
 }
 
 /**
- *  Flashcard Model - Represents a Flashcard
+ * Flashcard Model - Represents a Flashcard
  * @param {Sequelize} sequelize Sequelize Instance
  * @param {DataTypes} DataTypes DataTypes
  * @returns {FlashCardModel} Flashcard Model
@@ -92,12 +57,10 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.STRING,
         allowNull: false,
         validate: {
-          notEmpty: {
-            msg: "Please enter a question",
-          },
+          notEmpty: { msg: "Please enter a question" },
           len: {
             args: [0, 100],
-            msg: "Too long. Please enter a question between 0 and 100 characters",
+            msg: "Question must be between 0 and 100 characters",
           },
         },
       },
@@ -105,12 +68,10 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.STRING,
         allowNull: false,
         validate: {
-          notEmpty: {
-            msg: "Please enter an answer",
-          },
+          notEmpty: { msg: "Please enter an answer" },
           len: {
             args: [0, 100],
-            msg: "Too long. Please enter a response between 0 and 100 characters",
+            msg: "Answer must be between 0 and 100 characters",
           },
         },
       },
@@ -118,7 +79,6 @@ module.exports = (sequelize, DataTypes) => {
       category: {
         type: DataTypes.STRING,
         allowNull: true,
-
         /**
          * @returns {string[]}
          */
@@ -136,29 +96,33 @@ module.exports = (sequelize, DataTypes) => {
       step: {
         type: DataTypes.INTEGER,
         allowNull: false,
-        defaultValue: 0,
+        defaultValue: Flashcard.MIN_STEP,
         validate: {
           min: {
             args: [Flashcard.MIN_STEP],
-            msg: "Step must be greater than or equal to 0",
+            msg: `Step must be at least ${Flashcard.MIN_STEP}`,
           },
           max: {
             args: [Flashcard.MAX_STEP],
-            msg: "Step must be less than or equal to 7",
+            msg: `Step must be at most ${Flashcard.MAX_STEP}`,
           },
         },
-      },
+        /**
+         * @param {number} value
+         */
+        set(value) {
+          if (value > Flashcard.MAX_STEP) value = Flashcard.MAX_STEP;
+          if (value < Flashcard.MIN_STEP) value = Flashcard.MIN_STEP;
 
-      nextTrainingDate: {
+          this.setDataValue("step", value);
+        },
+      },
+      nextReviewDate: {
         type: DataTypes.DATE,
         allowNull: false,
-        defaultValue: new Date(),
+        defaultValue: DataTypes.NOW,
       },
     },
-
-    /**
-     * @type {import('sequelize').ModelOptions}
-     */
     {
       sequelize,
       modelName: "Flashcard",
