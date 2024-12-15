@@ -2,6 +2,7 @@ const { BaseError } = require("sequelize");
 const { Api404Error } = require("../errors/api-errors");
 
 module.exports = (Model) => {
+  /** @type {string} */
   const modelName = Model.name.toLowerCase();
   function create(options) {
     return Model.create(options).catch((error) => {
