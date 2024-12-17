@@ -1,9 +1,9 @@
 //@ts-check
-const { Model } = require("sequelize");
 
 /**
  * @typedef {import('sequelize').Sequelize} Sequelize
  * @typedef {import('sequelize').DataTypes} DataTypes
+ * @typedef {import('sequelize').Model} Model
  * @typedef {import('sequelize').ModelDefined<FlashcardAttributes, FlashcardCreationAttributes >} FlashCardModel
  * @typedef {Object} FlashcardAttributes
  * @property {number} id
@@ -13,36 +13,44 @@ const { Model } = require("sequelize");
  * @typedef {import('sequelize').Optional<FlashcardAttributes, 'id' | 'category'>} FlashcardCreationAttributes
  */
 
-class Flashcard extends Model {
-  static MIN_STEP = 0;
-  static MAX_STEP = 6;
-  static DAYS_TO_ADD = [1, 3, 7, 14, 30, 60, 120];
-
-  async review(isSuccessful = false) {
-    // @ts-ignore
-    this.#scheduleNextReview(isSuccessful ? ++this.step : --this.step);
-    return await this.save();
-  }
-
-  /**
-   * Calculates and sets the next training date based on the provided step.
-   * @param {number} step
-   */
-  #scheduleNextReview(step) {
-    const MILLS_IN_A_DAY = 86400000;
-    this.trainingDate = new Date(
-      Date.now() + Flashcard.DAYS_TO_ADD[step] * MILLS_IN_A_DAY
-    );
-  }
-}
-
 /**
  * Flashcard Model - Represents a Flashcard
  * @param {Sequelize} sequelize Sequelize Instance
  * @param {DataTypes} DataTypes DataTypes
+ * @param {Model} Model
  * @returns {FlashCardModel} Flashcard Model
  */
-module.exports = (sequelize, DataTypes) => {
+module.exports = (sequelize, DataTypes, Model) => {
+  class Flashcard extends Model {
+    static MIN_STEP = 0;
+    static MAX_STEP = 6;
+    static DAYS_TO_ADD = [1, 3, 7, 14, 30, 60, 120];
+
+    async review(isSuccessful = false) {
+      // @ts-ignore
+      this.#scheduleNextReview(isSuccessful ? ++this.step : --this.step);
+      return await this.save();
+    }
+
+    /**
+     * Calculates and sets the next training date based on the provided step.
+     * @param {number} step
+     */
+    #scheduleNextReview(step) {
+      const MILLS_IN_A_DAY = 86400000;
+      this.trainingDate = new Date(Date.now() + Flashcard.DAYS_TO_ADD[step] * MILLS_IN_A_DAY);
+    }
+
+    static associate = function defineAssociations() {
+      Flashcard.belongsTo(sequelize.models.User, {
+        foreignKey: {
+          name: "userId",
+          allowNull: false,
+        },
+      });
+    };
+  }
+
   return Flashcard.init(
     /**
      * @type {import('sequelize').ModelAttributes}
@@ -89,7 +97,7 @@ module.exports = (sequelize, DataTypes) => {
          * @param {string[]} category
          */
         set(category) {
-          this.setDataValue("category", category.join());
+          this.setDataValue("category", category?.join());
         },
       },
 
@@ -125,7 +133,6 @@ module.exports = (sequelize, DataTypes) => {
     },
     {
       sequelize,
-      modelName: "Flashcard",
       timestamps: true,
       updatedAt: false,
     }
