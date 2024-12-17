@@ -1,29 +1,18 @@
 //@ts-check
-const { Sequelize, DataTypes } = require("sequelize");
+const { Sequelize, DataTypes, Model } = require("sequelize");
 const { isDevENV } = require("../utils/utils");
-const dbConfig = require("./db.config.js");
+const { config: dbConfig } = require("./db.config.js");
 const sequelize = new Sequelize(...dbConfig);
-// Models
-const User = require("../models/user.model.js")(sequelize, DataTypes);
-const Flashcard = require("../models/flashcard.model.js")(sequelize, DataTypes);
-// Model's associations
-User.hasMany(Flashcard, {
-  foreignKey: {
-    name: "userId",
-    allowNull: false,
-  },
-  onDelete: "CASCADE",
-});
-Flashcard.belongsTo(User, {
-  foreignKey: {
-    name: "userId",
-    allowNull: false,
-  },
-});
 
+// Imports and associates models
+["../models/user.model.js", "../models/flashcard.model.js", "../models/confirmationToken.model.js"]
+  .map((path) => require(path))
+  .map((createModel) => createModel(sequelize, DataTypes, Model))
+  .forEach((model, _, models) => model.associate?.(models)); //call its associate method (if it exists) to define associations with other models.
+
+console.log({ models: sequelize.models });
 /**
- * Initializes the database connection and synchronizes the models.
- * If the environment is development (isDevENV is true), it also resets the database.
+ * Connects to the database and syncs the models.
  * @returns {Promise<Sequelize>} A promise that resolves with the Sequelize instance if the connection and sync are successful, otherwise rejects with an error.
  */
 async function connectDB() {
@@ -47,10 +36,10 @@ async function connectDB() {
 async function reset() {
   // Create an admin user and a regular user
   try {
-    const userData = require("../samples/users.sample.js");
+    const { admin, user } = require("../samples/users.sample.js");
 
-    await sequelize.models.User.create(userData.admin);
-    await sequelize.models.User.create(userData.user);
+    await sequelize.models.User.create(admin);
+    await sequelize.models.User.create(user);
   } catch (e) {
     console.error(e);
   }
@@ -58,9 +47,8 @@ async function reset() {
   // Create some flashcards
   try {
     const flashcardsStarter = require("../samples/flashcards.sample.json");
-    for (let i = 0; i < flashcardsStarter.length; i++) {
-      await sequelize.models.Flashcard.create(flashcardsStarter[i]);
-      console.log(`flashcard ${i + 1} created successfully!`);
+    for (const flashcardData of flashcardsStarter) {
+      await sequelize.models.Flashcard.create(flashcardData);
     }
   } catch (e) {
     console.error(e);
@@ -81,4 +69,4 @@ async function disconnectDB() {
   }
 }
 
-module.exports = { connectDB, disconnectDB, Flashcard, User };
+module.exports = { connectDB, disconnectDB, ...sequelize.models };
