@@ -1,4 +1,3 @@
-//const { error } = require("console");
 const { Flashcard } = require("../db");
 const { name, create, findByPk, findAll, findAndCountAll, updateById } =
   require("./base.service")(Flashcard);
@@ -21,14 +20,7 @@ module.exports = {
    * @throws {Error} If any errors occur during the processing or database update, an error is thrown containing a summary of the individual errors.
    */
   processFlashcardReviews: async (reviews) => {
-    const { ids, isSuccessful } = reviews.reduce(
-      (output, { id, isSuccessful }) => {
-        output.ids.push(id);
-        output.isSuccessful.push(isSuccessful);
-        return output;
-      },
-      { ids: [], isSuccessful: [] } // initial output
-    );
+    const ids = reviews.map((aReview) => aReview.id);
 
     try {
       const flashcards = await findAll({ where: { id: ids } });
@@ -36,11 +28,10 @@ module.exports = {
       const reviewedFlashcards = await Promise.all(
         flashcards.map(async (aFlashcard, index) => {
           try {
-            return await aFlashcard.review(isSuccessful[index]);
+            const { isSuccessful } = reviews[index];
+            return await aFlashcard.review(isSuccessful);
           } catch (error) {
-            logger.error(
-              `Error updating flashcard ${aFlashcard.id}: ${error.message}`
-            );
+            console.error(`Error updating flashcard ${aFlashcard.id}: ${error.message}`);
             return { error, id: aFlashcard.id };
           }
         })
@@ -55,12 +46,8 @@ module.exports = {
       );
 
       if (errors.length > 0) {
-        const errorMessages = errors.map(
-          (err) => `Flashcard ${err.id}: ${err.error}`
-        );
-        throw new Error(
-          `Errors during flashcard review: ${errorMessages.join(", ")}`
-        );
+        const errorMessages = errors.map((err) => `Flashcard ${err.id}: ${err.error}`);
+        throw new Error(`Errors during flashcard review: ${errorMessages.join(", ")}`);
       }
 
       return reviewedFlashcards;
