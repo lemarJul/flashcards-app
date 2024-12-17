@@ -26,11 +26,10 @@ function register(req, res, next) {
 
   authService
     .register(username, email, password)
-    .then(({ token, user }) => {
+    .then((user) => {
       res.status(201).json({
-        message: "Successfully registered",
+        message: "Successfully registered. Please confirm your email.",
         data: user,
-        token,
       });
     })
     .catch((err) => {
@@ -41,9 +40,7 @@ function register(req, res, next) {
 
 async function confirmUserEmail(req, res, next) {
   try {
-    const { token } = requireDefinedProps(req.query);
-
-    const user = await authService.confirmUserEmail(token);
+    const user = await authService.confirmUserEmail(req.params.token);
 
     res.json({
       message: "Email confirmed",
