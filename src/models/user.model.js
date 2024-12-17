@@ -24,7 +24,7 @@ const bcrypt = require("bcrypt");
  * @returns {UserModel} User
  */
 module.exports = (sequelize, DataTypes) => {
-  return sequelize.define("User", {
+  const User = sequelize.define("User", {
     id: {
       type: DataTypes.INTEGER,
       primaryKey: true,
@@ -84,33 +84,11 @@ module.exports = (sequelize, DataTypes) => {
         },
       },
     },
+
     emailConfirmed: {
       type: DataTypes.BOOLEAN,
       allowNull: false,
       defaultValue: false,
-      set(value) {
-        if (value === true) {
-          this.setDataValue("emailConfirmed", value);
-        }
-      },
-    },
-
-    confirmationToken: {
-      type: DataTypes.STRING,
-      allowNull: true,
-      defaultValue: () => crypto.randomBytes(20).toString("hex"),
-      set(value) {
-        this.setDataValue("confirmationToken", /** @type {String} */ (value));
-        this.setDataValue(
-          "confirmationTokenExpires",
-          new Date(Date.now() + 3600000)
-        );
-      },
-    },
-    confirmationTokenExpires: {
-      type: DataTypes.DATE,
-      allowNull: true,
-      defaultValue: new Date(Date.now() + 3600000),
     },
     role: {
       type: DataTypes.ENUM("admin", "user"),
@@ -118,4 +96,26 @@ module.exports = (sequelize, DataTypes) => {
       defaultValue: "user",
     },
   });
+
+  User.associate = function associate() {
+    const { Flashcard, ConfirmationToken } = sequelize.models;
+
+    User.hasOne(ConfirmationToken, {
+      foreignKey: {
+        name: "userId",
+        allowNull: false,
+      },
+      onDelete: "CASCADE",
+    });
+
+    User.hasMany(Flashcard, {
+      foreignKey: {
+        name: "userId",
+        allowNull: false,
+      },
+      onDelete: "CASCADE",
+    });
+  };
+
+  return User;
 };
