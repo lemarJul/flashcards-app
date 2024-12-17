@@ -24,7 +24,7 @@ module.exports = {
   name: baseService.name,
   create: baseService.create,
   findById: baseService.findByPk,
-  findByName: (name) => baseService.findOne({ name }),
+  findByName: (name) => baseService.findOne({ where: { name } }),
   findOne: baseService.findOne,
   updateById: (id, data) => {
     delete data.id;

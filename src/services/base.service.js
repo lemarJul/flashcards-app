@@ -14,9 +14,7 @@ module.exports = (Model) => {
     return Model.findByPk(primaryKey)
       .then((resource) => {
         if (!resource)
-          throw new Api404Error(
-            `requested ${modelName} with primary key ${primaryKey} not found`
-          );
+          throw new Api404Error(`requested ${modelName} with primary key ${primaryKey} not found`);
         return resource;
       })
       .catch((error) => {
@@ -25,15 +23,10 @@ module.exports = (Model) => {
         throw error;
       });
   }
-  function findOne(whereOpt) {
-    return Model.findOne({
-      where: whereOpt,
-    })
+  function findOne(query) {
+    return Model.findOne(query)
       .then((ressource) => {
-        if (!ressource)
-          throw new Api404Error(
-            `requested ${modelName} where ${whereOpt} not found`
-          );
+        if (!ressource) throw new Api404Error(`requested ${modelName} where ${whereOpt} not found`);
         return ressource;
       })
       .catch((error) => {
@@ -42,14 +35,14 @@ module.exports = (Model) => {
         throw error;
       });
   }
-  function findAll(options) {
-    return Model.findAll(options).catch((error) => {
+  function findAll(query) {
+    return Model.findAll(query).catch((error) => {
       error.message = `Error in fetching all ${modelName}`;
       throw error;
     });
   }
-  function findAndCountAll(options) {
-    return Model.findAndCountAll(options).catch((error) => {
+  function findAndCountAll(query) {
+    return Model.findAndCountAll(query).catch((error) => {
       error.message = `Error in fetching all ${modelName}`;
       throw error;
     });
