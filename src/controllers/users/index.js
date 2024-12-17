@@ -6,5 +6,4 @@ module.exports = {
   findById: baseController.findById,
   updateById: baseController.updateById,
   deleteById: baseController.deleteById,
-  confirmEmail: require("./confirm-email.js"),
 };
