@@ -6,7 +6,7 @@ const mailService = require("./mail.service");
 const { ConfirmationToken } = require("../db/index");
 
 async function login(email, password) {
-  const user = await userService.findOne({ email });
+  const user = await userService.findOne({ where: { email } });
   if (!user) throw new Api404Error(`Requested user with username ${username} doesn't exist`);
 
   const passwordMatch = await bcrypt.compare(password, user.password);
