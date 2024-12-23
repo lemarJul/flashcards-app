@@ -1,4 +1,4 @@
-const { Api400Error, Api404Error } = require("../errors/api-errors.js");
+const { Api400Error, Api404Error, Api401Error } = require("../errors/api-errors.js");
 const { BaseError } = require("sequelize");
 const authService = require("../services/auth.service.js");
 const { requireDefinedProps } = require("./utils.js");
@@ -47,11 +47,26 @@ async function confirmUserEmail(req, res, next) {
       data: user,
     });
   } catch (err) {
-    if (!(err instanceof BaseError))
-      err.message = `Error in confirming email: ${err.message}`;
+    if (!(err instanceof BaseError)) err.message = `Error in confirming email: ${err.message}`;
 
     next(err);
   }
 }
 
-module.exports = { login, register, confirmUserEmail };
+async function logout(req, res, next) {
+  try {
+    if (req.user) {
+      const user = req.user;
+      const token = req.headers.authorization.split(" ")[1];
+
+      await authService.revokeToken(token);
+      res.json({ message: "Successfully logged out", data: user });
+    } else {
+      throw new Api401Error("Unauthorized");
+    }
+  } catch (err) {
+    next(err);
+  }
+}
+
+module.exports = { login, register, confirmUserEmail, logout };
