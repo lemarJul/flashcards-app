@@ -17,6 +17,14 @@ async function login(email, password) {
     user,
   };
 }
+
+async function revokeToken(token) {
+  // In a real-world application, you would invalidate the token (e.g., blacklist it, add an expiry flag to the database, etc.)
+  // For this example, we'll simulate token revocation by logging a message.
+  console.log(`Token ${token} revoked.`);
+  return true;
+}
+
 async function register(username, email, password, validationUrl) {
   const user = await userService.create({ username, email, password });
   const confirmationToken = await user.createConfirmationToken();
@@ -92,6 +100,7 @@ function verifyToken(token, privateKey) {
 
 module.exports = {
   login,
+  revokeToken,
   register,
   authUser,
   confirmUserEmail,
