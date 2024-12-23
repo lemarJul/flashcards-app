@@ -14,7 +14,7 @@ async function processFlashcardReviews(req, res, next) {
 
     res.status(200).json({
       message: "the study of flashcards has been taken into account",
-      data: await controller.processFlashcardReviews(reviews),
+      data: await service.processFlashcardReviews(reviews),
     });
   } catch (err) {
     next(err);
