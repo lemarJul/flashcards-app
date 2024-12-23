@@ -17,7 +17,7 @@ const invalidPathHandler = require("./src/errors/invalid-path-handler");
 
 // Configuration
 const accessLogStream = fs.createWriteStream(
-  path.join(__dirname, "access.log"),
+  path.join(__dirname, "logs", "access.log"),
   { flags: "a" }
 );
 const logConfig = isDevENV
