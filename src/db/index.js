@@ -1,8 +1,7 @@
 //@ts-check
 const { Sequelize, DataTypes, Model } = require("sequelize");
 const { isDevENV } = require("../utils/utils");
-const { config: dbConfig } = require("./db.config.js");
-const sequelize = new Sequelize(...dbConfig);
+const sequelize = new Sequelize(...require("./db.config.js"));
 
 // Imports and associates models
 ["../models/user.model.js", "../models/flashcard.model.js", "../models/confirmationToken.model.js"]
@@ -34,6 +33,7 @@ async function connectDB() {
  * @returns {Promise<void>} A promise that resolves when the database reset is complete.
  */
 async function reset() {
+  emptyAllModels();
   // Create an admin user and a regular user
   try {
     const { admin, user } = require("../samples/users.sample.js");
@@ -52,6 +52,22 @@ async function reset() {
     }
   } catch (e) {
     console.error(e);
+  }
+}
+
+async function emptyAllModels() {
+  const modelsToEmpty = Object.values(sequelize.models); // Get an array of all your models
+
+  const transaction = await sequelize.transaction();
+  try {
+    await Promise.all(modelsToEmpty.map((model) => model.destroy({ where: {}, transaction })));
+
+    await transaction.commit();
+    console.log("All models emptied successfully.");
+  } catch (error) {
+    if (transaction) await transaction.rollback();
+    console.error("Error emptying models:", error);
+    throw error; // Re-throw for handling by the calling function
   }
 }
 
