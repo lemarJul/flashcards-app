@@ -4,7 +4,7 @@ const parseFinderOptions = require("./utils.controller.js");
 const { requireDefinedProps } = require("../utils.js");
 
 function includeUserIdToBody(req, res, next) {
-  req.body.userId = req.authUser.id;
+  req.body.userId = req.user.id;
   next();
 }
 
