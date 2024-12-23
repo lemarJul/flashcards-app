@@ -42,7 +42,7 @@ module.exports = (sequelize, DataTypes) => {
           msg: "Please enter a username",
         },
         len: {
-          args: [0, 15],
+          args: [0, 25],
           msg: "Too long. Please enter a username between 0 and 15 characters",
         },
       },
