@@ -21,7 +21,7 @@ module.exports = (service) => {
       const rsc = preFetchedRsc(req) || (await service.findById(req.params.id));
 
       return res.status(200).json({
-        message: `${service.name} with id ${req.params.id} successfully fetched.`,
+        message: `${service.name} with id ${rsc.id} successfully fetched.`,
         data: rsc,
       });
     } catch (err) {
