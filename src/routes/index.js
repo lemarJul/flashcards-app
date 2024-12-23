@@ -1,11 +1,14 @@
-const express = require("express");
-// const appRouter = require("./app");
-const apiRouter = require("./api");
+/**
+ * Defines routes for the application using Express.js.  This code uses a recursive function to define routes based on a map of paths and handlers.  It supports multiple HTTP methods and middleware per route. Static files are served from the 'public' directory.
 
-const router = express
-  .Router()
-  .use(express.static("public")) // serve static files from public folder
-  // .use(appRouter) // use appRouter for all routes
-  .use("/api", apiRouter); // use apiRouter for all routes starting with /api
+ * @module routes
+ */
+const express = require("express");
+const router = require("./router.can-map")(express.Router());
+const { routeConfig } = require("./router.config");
+
+// serve static files from public folder
+router.use(express.static("public"));
+router.map(routeConfig);
 
 module.exports = router;
