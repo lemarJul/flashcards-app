@@ -10,7 +10,7 @@ module.exports = {
   findAndCountAll,
   updateById: (id, data) => {
     delete data.id;
-    return baseService.updateById(id, data);
+    return updateById(id, data);
   },
 
   /**
