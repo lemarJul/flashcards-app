@@ -31,6 +31,7 @@ module.exports = (service) => {
 
   async function findAll(req, res, next) {
     try {
+      console.log({ query: req.query });
       const rows = await service.findAll(req.findOptions);
 
       return res.status(200).json({
@@ -64,14 +65,15 @@ module.exports = (service) => {
 
   async function updateById(req, res, next) {
     try {
-      await service.updateById(req.params.id, req.body);
-      const rsc = await service.findById(req.params.id);
+      const { id } = req[service.name];
+      await service.updateById(id, req.body);
+      const rsc = await service.findById(id);
       res.json({
-        message: `${service.name} with id ${req.params.id} updated successfully`,
+        message: `${service.name} with id ${id} updated successfully`,
         data: rsc,
       });
     } catch (error) {
-      error.message = `Error in updating requested ${service.name} with id ${req.params.id} => ${error.message}`;
+      error.message = `Error in updating requested ${service.name} with id ${id} => ${error.message}`;
       next(error);
     }
   }
