@@ -4,11 +4,10 @@
  * @module routes
  */
 const express = require("express");
-const router = require("./router.can-map")(express.Router());
-const { routeConfig } = require("./router.config");
+const router = require("./router-can-map")(express.Router());
+const routesMap = require("./map.routes");
 
-// serve static files from public folder
 router.use(express.static("public"));
-router.map(routeConfig);
+router.map(routesMap);
 
 module.exports = router;
