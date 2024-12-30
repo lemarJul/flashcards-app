@@ -1,5 +1,5 @@
 const { Flashcard } = require("../db");
-const { name, create, findByPk, findAll, findAndCountAll, updateById } =
+const { name, create, findByPk, findAll, findAndCountAll, updateById, deleteById } =
   require("./base.service")(Flashcard);
 
 module.exports = {
@@ -12,6 +12,7 @@ module.exports = {
     delete data.id;
     return updateById(id, data);
   },
+  deleteById,
 
   /**
    * Processes an array of flashcard review results.  Updates the flashcards in the database based on the review results.
