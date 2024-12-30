@@ -3,13 +3,16 @@ const { Sequelize, DataTypes, Model } = require("sequelize");
 const { isDevENV } = require("../utils/utils");
 const sequelize = new Sequelize(...require("./db.config.js"));
 
-// Imports and associates models
-["../models/user.model.js", "../models/flashcard.model.js", "../models/confirmationToken.model.js"]
+const Models = [
+  // Imports and associates models
+  "../models/user.model.js",
+  "../models/flashcard.model.js",
+  "../models/confirmationToken.model.js",
+]
   .map((path) => require(path))
   .map((createModel) => createModel(sequelize, DataTypes, Model))
-  .forEach((model, _, models) => model.associate?.(models)); //call its associate method (if it exists) to define associations with other models.
+  .map((model, _, models) => model.associate?.(models)); //call its associate method (if it exists) to define associations with other models.
 
-console.log({ models: sequelize.models });
 /**
  * Connects to the database and syncs the models.
  * @returns {Promise<Sequelize>} A promise that resolves with the Sequelize instance if the connection and sync are successful, otherwise rejects with an error.

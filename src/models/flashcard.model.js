@@ -48,6 +48,7 @@ module.exports = (sequelize, DataTypes, Model) => {
           allowNull: false,
         },
       });
+      return Flashcard;
     };
   }
 
