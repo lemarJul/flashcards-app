@@ -4,6 +4,7 @@ const { parseSemVer } = require("../utils/utils");
 const Auth = require("../controllers/auth.controller");
 const Flashcard = require("../controllers/flashcards/flashcards.controller");
 const User = require("../controllers/users");
+const Category = require("../controllers/categories");
 const mwAuth = require("../middlewares/auth.middlewares");
 const { attachFlashcardToRequest } = require("../middlewares/flashcards.middlewares");
 const { attachUserToRequest } = require("../middlewares/users.middlewares");
@@ -61,6 +62,9 @@ module.exports = {
         "/review": {
           post: Flashcard.processFlashcardReviews,
         },
+      },
+      "/categories": {
+        get: Category.findAll,
       },
       "/users": {
         "/:user": {
