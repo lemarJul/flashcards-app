@@ -9,6 +9,10 @@ const mwAuth = require("../middlewares/auth.middlewares");
 const { attachFlashcardToRequest } = require("../middlewares/flashcards.middlewares");
 const { attachUserToRequest } = require("../middlewares/users.middlewares");
 
+// Schemas
+const validate = require("../middlewares/validate.middleware");
+const Schemas = require("../schemas");
+
 const version = parseSemVer(config.app.version)?.major;
 
 const PONG = (req, res) => {
@@ -39,14 +43,14 @@ module.exports = {
           get: Auth.confirmUserEmail,
         },
         "/login": {
-          post: Auth.login,
+          post: [validate(Schemas.Auth.login), Auth.login],
         },
         "/register": {
-          post: Auth.register,
+          post: [validate(Schemas.Auth.register), Auth.register],
         },
         "/logout": {
           post: [mwAuth.user, Auth.logout],
-        }, //Note: This line is different.  See explanation below.
+        },
       },
       "/*": {
         all: mwAuth.user,
