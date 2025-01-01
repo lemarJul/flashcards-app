@@ -42,7 +42,7 @@ module.exports = (sequelize, DataTypes) => {
           msg: "Please enter a username",
         },
         len: {
-          args: [0, 25],
+          args: [3, 25],
           msg: "Too long. Please enter a username between 0 and 15 characters",
         },
       },
@@ -54,6 +54,7 @@ module.exports = (sequelize, DataTypes) => {
         notEmpty: {
           msg: "Please enter a password",
         },
+        min: 8
       },
       /**
        * Hashes the password before saving it to the database
