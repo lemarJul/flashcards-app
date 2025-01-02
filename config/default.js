@@ -30,4 +30,15 @@ database.url =
   process.env.DB_URL ||
   `${database.dialect}://${database.user}:${database.password}@${database.host}:/${database.dbName}`;
 
-module.exports = { server, app, database, logging: "common" };
+const redis = {
+  host: process.env.REDIS_HOST || '127.0.0.1',
+  port: process.env.REDIS_PORT || 6379,
+  password: process.env.REDIS_PASSWORD || null,
+  keyPrefix: 'mnemoniac:',
+  retryStrategy: (times) => {
+    const delay = Math.min(times * 50, 2000);
+    return delay;
+  }
+};
+
+module.exports = { server, app, database, redis, logging: "common" };

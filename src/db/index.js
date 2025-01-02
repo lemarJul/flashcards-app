@@ -1,7 +1,9 @@
 //@ts-check
+const { url, dialectOptions, sync, logging } = require("config").get("database");
 const { Sequelize, DataTypes, Model } = require("sequelize");
 const { isDevENV } = require("../utils/utils");
-const sequelize = new Sequelize(...require("./db.config.js"));
+const redisClient = require("./redis")
+const sequelize = new Sequelize(url, { dialectOptions, logging });
 
 const Models = [
   // Imports and associates models
@@ -19,14 +21,19 @@ const Models = [
  */
 async function connectDB() {
   try {
+    // Connect to Redis
+    await redisClient.connect();
+    console.log("Redis connection established successfully.");
+
+    // Connect to SQL database
     await sequelize.authenticate();
     console.log("DB Connection has been established successfully.");
-    await sequelize.sync({ force: isDevENV });
+    await sequelize.sync(sync);
     console.log("DB Sync has been completed.");
     if (isDevENV) await reset();
     return sequelize;
   } catch (err) {
-    console.error("Unable to connect to the database:", err);
+    console.error("Unable to connect to the databases:", err);
     throw err;
   }
 }
@@ -80,12 +87,17 @@ async function emptyAllModels() {
  */
 async function disconnectDB() {
   try {
+    // Close Redis connection
+    await redisClient.disconnect();
+    console.log("Redis connection closed successfully.");
+
+    // Close SQL connection
     await sequelize.close();
     console.log("DB Connection has been closed successfully.");
   } catch (err) {
-    console.error("Unable to close the database connection:", err);
+    console.error("Unable to close database connections:", err);
     throw err;
   }
 }
 
-module.exports = { connectDB, disconnectDB, ...sequelize.models };
+module.exports = { connectDB, disconnectDB, redisClient, ...sequelize.models };
