@@ -5,11 +5,6 @@ const crypto = require("crypto");
 module.exports = ({ privateKey, redisClient }) => {
   const signAsync = promisify(jwt.sign);
   const verifyAsync = promisify(jwt.verify);
-  let redisClientConnection = null;
-
-  if (redisClient) {
-    redisClientConnection = redisClient.getClient();
-  }
 
   const generateTokenId = () => {
     return crypto.randomBytes(32).toString("hex");
@@ -57,19 +52,21 @@ module.exports = ({ privateKey, redisClient }) => {
     try {
       const decoded = await verifyAsync(token, privateKey);
 
-      if (redisClientConnection) {
+      if (redisClient.connection) {
         // Check if token is blacklisted
-        const isBlacklisted = await redisClientConnection.get(`bl_${token}`);
+        const isBlacklisted = await redisClient.connection.get(`bl_${token}`);
         if (isBlacklisted) {
           throw new Error("Token has been revoked");
         }
 
         // For refresh tokens, check if the token has been used
         if (decoded.type === "refresh") {
-          const isUsed = await redisClientConnection.get(`used_${decoded.jti}`);
+          const isUsed = await redisClient.connection.get(
+            `used_${decoded.jti}`
+          );
           if (isUsed) {
             // If token was used, invalidate entire family
-            await redisClientConnection.setex(
+            await redisClient.connection.setex(
               `family_bl_${decoded.family}`,
               7 * 24 * 60 * 60, // 7 days
               "true"
@@ -78,7 +75,7 @@ module.exports = ({ privateKey, redisClient }) => {
           }
 
           // Check if family is blacklisted
-          const isFamilyBlacklisted = await redisClientConnection.get(
+          const isFamilyBlacklisted = await redisClient.connection.get(
             `family_bl_${decoded.family}`
           );
           if (isFamilyBlacklisted) {
@@ -105,13 +102,13 @@ module.exports = ({ privateKey, redisClient }) => {
       const now = Math.floor(Date.now() / 1000);
       const ttl = exp - now;
 
-      if (ttl > 0 && redisClientConnection) {
+      if (ttl > 0 && redisClient.connection) {
         // Add token to blacklist with TTL
-        await redisClientConnection.setex(`bl_${token}`, ttl, "true");
+        await redisClient.connection.setex(`bl_${token}`, ttl, "true");
 
         // If it's a refresh token, blacklist the entire family
         if (decoded.type === "refresh") {
-          await redisClientConnection.setex(
+          await redisClient.connection.setex(
             `family_bl_${decoded.family}`,
             7 * 24 * 60 * 60, // 7 days
             "true"
@@ -129,7 +126,7 @@ module.exports = ({ privateKey, redisClient }) => {
 
   const markRefreshTokenAsUsed = async (token) => {
     try {
-      if (!redisClientConnection) return;
+      if (!redisClient.connection) return;
 
       const decoded = await verifyAsync(token, privateKey);
       if (decoded.type !== "refresh") {
@@ -137,7 +134,7 @@ module.exports = ({ privateKey, redisClient }) => {
       }
 
       // Mark token as used
-      await redisClientConnection.setex(
+      await redisClient.connection.setex(
         `used_${decoded.jti}`,
         7 * 24 * 60 * 60, // 7 days
         "true"
