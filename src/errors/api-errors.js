@@ -45,6 +45,17 @@ class Api404Error extends BaseError {
   }
 }
 
+class Api429Error extends BaseError {
+  constructor(
+    name,
+    statusCode = httpStatusCodes.TOO_MANY_REQUESTS,
+    isOperational = true,
+    description = "Too Many Requests"
+  ) {
+    super(name, statusCode, isOperational, description);
+  }
+}
+
 class Api500Error extends BaseError {
   constructor(
     name,
@@ -54,12 +65,13 @@ class Api500Error extends BaseError {
   ) {
     super(name, statusCode, isOperational, description);
   }
-};
+}
 
 module.exports = {
   Api400Error,
   Api401Error,
   Api403Error,
   Api404Error,
+  Api429Error,
   Api500Error,
 };
