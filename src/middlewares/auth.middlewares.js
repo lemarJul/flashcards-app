@@ -33,7 +33,8 @@ const authUser =
   };
 
 const ownResource = (rsc) => (req, res, next) => {
-  if (req.user && req.user.id !== req[rsc].userId) next(new Api401Error("Not allowed"));
+  if (req.user && req.user.id !== req[rsc].userId)
+    next(new Api401Error("Not allowed"));
   next();
 };
 
@@ -45,7 +46,9 @@ const ownResource = (rsc) => (req, res, next) => {
  */
 function checkRole(user, role) {
   if (user.role !== role)
-    throw new Api401Error("Unauthorized: You do not have permission to access this data");
+    throw new Api401Error(
+      "Unauthorized: You do not have permission to access this data"
+    );
 }
 
 /**

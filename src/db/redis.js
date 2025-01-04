@@ -1,5 +1,5 @@
-const Redis = require('ioredis');
-const config = require('config');
+const Redis = require("ioredis");
+const config = require("config");
 
 class RedisClient {
   constructor() {
@@ -14,25 +14,25 @@ class RedisClient {
       }
 
       this.client = new Redis({
-        ...config.get('redis'),
+        ...config.get("redis"),
         lazyConnect: true,
         enableReadyCheck: true,
         maxRetriesPerRequest: 3,
       });
 
       // Handle connection events
-      this.client.on('connect', () => {
+      this.client.on("connect", () => {
         this.isConnected = true;
-        console.log('Redis client connected');
+        console.log("Redis client connected");
       });
 
-      this.client.on('error', (err) => {
-        console.error('Redis client error:', err);
+      this.client.on("error", (err) => {
+        console.error("Redis client error:", err);
         this.isConnected = false;
       });
 
-      this.client.on('close', () => {
-        console.log('Redis client disconnected');
+      this.client.on("close", () => {
+        console.log("Redis client disconnected");
         this.isConnected = false;
       });
 
@@ -41,7 +41,7 @@ class RedisClient {
 
       return this.client;
     } catch (error) {
-      console.error('Redis connection error:', error);
+      console.error("Redis connection error:", error);
       throw error;
     }
   }
@@ -56,7 +56,7 @@ class RedisClient {
 
   getClient() {
     if (!this.client || !this.isConnected) {
-      throw new Error('Redis client not connected');
+      throw new Error("Redis client not connected");
     }
     return this.client;
   }

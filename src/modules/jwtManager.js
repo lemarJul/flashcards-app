@@ -27,7 +27,9 @@ module.exports = ({ privateKey, redisClient }) => {
         { expiresIn: "15m" }
       );
     } catch (error) {
-      throw new Error("Access token creation failed: " + error.message, { cause: error });
+      throw new Error("Access token creation failed: " + error.message, {
+        cause: error,
+      });
     }
   };
 
@@ -45,7 +47,9 @@ module.exports = ({ privateKey, redisClient }) => {
         { expiresIn: "7d" }
       );
     } catch (error) {
-      throw new Error("Refresh token creation failed: " + error.message, { cause: error });
+      throw new Error("Refresh token creation failed: " + error.message, {
+        cause: error,
+      });
     }
   };
 
@@ -85,7 +89,9 @@ module.exports = ({ privateKey, redisClient }) => {
 
       return decoded;
     } catch (error) {
-      throw new Error("JWT Verification Failed: " + error.message, { cause: error });
+      throw new Error("JWT Verification Failed: " + error.message, {
+        cause: error,
+      });
     }
   };
 
@@ -115,7 +121,9 @@ module.exports = ({ privateKey, redisClient }) => {
 
       return true;
     } catch (error) {
-      throw new Error("Token revocation failed: " + error.message, { cause: error });
+      throw new Error("Token revocation failed: " + error.message, {
+        cause: error,
+      });
     }
   };
 
@@ -137,7 +145,10 @@ module.exports = ({ privateKey, redisClient }) => {
 
       return decoded;
     } catch (error) {
-      throw new Error("Failed to mark refresh token as used: " + error.message, { cause: error });
+      throw new Error(
+        "Failed to mark refresh token as used: " + error.message,
+        { cause: error }
+      );
     }
   };
 

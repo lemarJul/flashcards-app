@@ -4,7 +4,7 @@
  *
  * @module schemas
  */
-const Joi = require('joi');
+const Joi = require("joi");
 
 const passwordSchema = Joi.string().required();
 const emailSchema = Joi.string().email().required();
