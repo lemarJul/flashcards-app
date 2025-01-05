@@ -1,19 +1,26 @@
 const Redis = require("ioredis");
 const config = require("config");
 
+/**
+ * Redis client singleton class.  Manages a single connection to a Redis server using ioredis.
+ * Provides methods for connecting, disconnecting, and retrieving the client instance.  Handles connection events and errors.
+ * Uses configuration from the 'config' module.
+ */
 class RedisClient {
+  #client;
+
   constructor() {
-    this.client = null;
+    this.#client = null;
     this.isConnected = false;
   }
 
   async connect() {
     try {
-      if (this.client) {
-        return this.client;
+      if (this.#client) {
+        return this.#client;
       }
 
-      this.client = new Redis({
+      this.#client = new Redis({
         ...config.get("redis"),
         lazyConnect: true,
         enableReadyCheck: true,
@@ -21,25 +28,25 @@ class RedisClient {
       });
 
       // Handle connection events
-      this.client.on("connect", () => {
+      this.#client.on("connect", () => {
         this.isConnected = true;
         console.log("Redis client connected");
       });
 
-      this.client.on("error", (err) => {
+      this.#client.on("error", (err) => {
         console.error("Redis client error:", err);
         this.isConnected = false;
       });
 
-      this.client.on("close", () => {
+      this.#client.on("close", () => {
         console.log("Redis client disconnected");
         this.isConnected = false;
       });
 
       // Initial connection
-      await this.client.connect();
+      await this.#client.connect();
 
-      return this.client;
+      return this.#client;
     } catch (error) {
       console.error("Redis connection error:", error);
       throw error;
@@ -47,21 +54,20 @@ class RedisClient {
   }
 
   async disconnect() {
-    if (this.client) {
-      await this.client.quit();
-      this.client = null;
+    if (this.#client) {
+      await this.#client.quit();
+      this.#client = null;
       this.isConnected = false;
     }
   }
 
-  getClient() {
-    if (!this.client || !this.isConnected) {
+  get connection() {
+    if (!this.#client || !this.isConnected) {
       throw new Error("Redis client not connected");
     }
-    return this.client;
+    return this.#client;
   }
 }
 
 // Export singleton instance
-const redisClient = new RedisClient();
-module.exports = redisClient;
+module.exports = new RedisClient();
