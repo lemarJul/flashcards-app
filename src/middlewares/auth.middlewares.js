@@ -1,6 +1,9 @@
-const { Api401Error } = require("../errors/api-errors.js");
+const { Api401Error, Api429Error } = require("../errors/api-errors.js");
 const authService = require("../services/auth.service.js");
-
+const { redisClient } = require("../db");
+const RateLimiter = require("../modules/rateLimiter.js")({ redisClient });
+const { config } = require("dotenv");
+const rateLimitConfig = require("config").get("rateLimit");
 const ROLES = Object.freeze({ admin: "admin" });
 
 /**
@@ -86,8 +89,69 @@ function revokeJWT(token) {
   updateRevokedTokens(decodedToken.payload.sub);
 }
 
+//* ////////////////////////////////////////////////////////////////////////
+//* LIMITERS
+//* ////////////////////////////////////////////////////////////////////////
+
+// async function limit(req, res, next) {
+//   const limiter = new RateLimiter(req.path, configs);
+//   try {
+//     await limiter.checkRateLimit("ip", req.ip);
+//     if (req.body.email) await limiter.checkRateLimit("email", req.body.email);
+//     if (req.body.userId)
+//       await limiter.checkRateLimit("userId", req.body.userId);
+//     // add more checks here as needed
+//     next();
+//   } catch (error) {
+//     if (error.message.includes("rate limit exceeded")) {
+//       next(new Api429Error(error.message));
+//     } else {
+//       next(error);
+//     }
+//   }
+// }
+
+async function loginLimiter(req, res, next) {
+  const limiter = new RateLimiter("login", rateLimitConfig.login);
+  try {
+    await limiter.checkRateLimit("ip", req.ip);
+    if (req.body.email) await limiter.checkRateLimit("email", req.body.email);
+    // add more checks here as needed
+    next();
+  } catch (error) {
+    if (error.message.includes("rate limit exceeded")) {
+      next(new Api429Error(error.message));
+    } else {
+      next(error);
+    }
+  }
+}
+
+async function refreshTokenLimiter(req, res, next) {
+  const { checkRateLimit: checkLimit } = new RateLimiter(
+    "refresh",
+    rateLimitConfig.refreshToken
+  );
+  try {
+    await checkLimit("ip", req.ip);
+    if (req.body.userId) await checkLimit("userId", req.body.userId);
+    // add more checks here as needed
+    next();
+  } catch (error) {
+    if (error.message.includes("rate limit exceeded")) {
+      next(new Api429Error(error.message));
+    } else {
+      next(error);
+    }
+  }
+}
+
 module.exports = {
   user: authUser(),
   admin: authUser(ROLES.admin),
   ownResource,
+  limiters: {
+    loginLimiter,
+    refreshTokenLimiter,
+  },
 };
