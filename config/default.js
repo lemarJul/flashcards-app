@@ -31,14 +31,41 @@ database.url =
   `${database.dialect}://${database.user}:${database.password}@${database.host}:/${database.dbName}`;
 
 const redis = {
-  host: process.env.REDIS_HOST || '127.0.0.1',
+  host: process.env.REDIS_HOST || "127.0.0.1",
   port: process.env.REDIS_PORT || 6379,
   password: process.env.REDIS_PASSWORD || null,
-  keyPrefix: 'mnemoniac:',
+  keyPrefix: "mnemoniac:",
   retryStrategy: (times) => {
     const delay = Math.min(times * 50, 2000);
     return delay;
-  }
+  },
 };
 
-module.exports = { server, app, database, redis, logging: "common" };
+const rateLimit = {
+  login: [
+    {
+      identifierType: "ip",
+      limit: 100,
+      windowInSeconds: 5 * 60,
+    }, // 30 attempts per 5 minutes
+    {
+      identifierType: "email",
+      limit: 10,
+      windowInSeconds: 60,
+    }, // 10 attempts per minute
+  ],
+  refreshToken: [
+    {
+      identifierType: "ip",
+      limit: 60,
+      windowInSeconds: 60 * 60,
+    }, // 60 attempts per hour
+    {
+      identifierType: "userid",
+      limit: 30,
+      windowInSeconds: 60 * 60,
+    }, // 30 attempts per hour
+  ],
+};
+
+module.exports = { server, app, database, redis, rateLimit, logging: "common" };
