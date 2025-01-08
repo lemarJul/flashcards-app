@@ -1,130 +1,149 @@
-module.exports = ({ redisClient }) => {
-  const redisClientConnection = redisClient?.getClient();
+module.exports = ({ redisClient }) =>
+  class RateLimiter {
+    #keyPrefix = "rateLimit:";
+    #route;
+    #normalizedConfigs;
 
-  /**
-   * Implements a sliding window rate limit
-   * @param {string} key - The key to track (e.g., "login:userId" or "refresh:ip")
-   * @param {number} limit - Maximum number of operations allowed in the window
-   * @param {number} windowInSeconds - Time window in seconds
-   * @returns {Promise<{success: boolean, remaining: number, resetIn: number}>}
-   */
-  const checkRateLimit = async (key, limit, windowInSeconds) => {
-    if (!redisClientConnection) {
-      return { success: true, remaining: limit, resetIn: 0 };
-    }
-
-    const now = Date.now();
-    const windowStart = now - (windowInSeconds * 1000);
-
-    try {
-      // Add the current timestamp and remove old entries
-      const multi = redisClientConnection.multi();
-      
-      // Add current timestamp to the sorted set
-      multi.zadd(key, now, now.toString());
-      
-      // Remove timestamps outside the window
-      multi.zremrangebyscore(key, '-inf', windowStart);
-      
-      // Count remaining timestamps in window
-      multi.zcard(key);
-      
-      // Set expiry on the key
-      multi.expire(key, windowInSeconds);
-
-      const [, , count] = await multi.exec();
-      const remaining = Math.max(0, limit - count);
-      
-      if (count > limit) {
-        // Get the oldest timestamp in the window
-        const oldestTimestamp = await redisClientConnection.zrange(key, 0, 0);
-        const resetIn = Math.ceil((parseInt(oldestTimestamp) + (windowInSeconds * 1000) - now) / 1000);
-        
-        return {
-          success: false,
-          remaining: 0,
-          resetIn
-        };
+    /**
+     * Creates a new rate limiter instance
+     * @param {string} route - The route to rate limit
+     * @param {Array<{identifierType: string, limit: number, windowInSeconds: number}>} configs - Rate limit configurations
+     * @throws {Error} If configs are invalid
+     */
+    constructor(route, configs) {
+      if (!Array.isArray(configs) || configs.length === 0) {
+        throw new Error("Rate limit configs must be a non-empty array");
       }
 
-      return {
-        success: true,
-        remaining,
-        resetIn: windowInSeconds
-      };
-    } catch (error) {
-      console.error('Rate limiter error:', error);
-      // Fail open if Redis is unavailable
-      return { success: true, remaining: limit, resetIn: 0 };
-    }
-  };
-
-  /**
-   * Rate limit for login attempts
-   * Stricter limit per IP, more lenient per user
-   */
-  const loginRateLimit = async (ip, email) => {
-    // Strict IP-based limit: 30 attempts per 5 minutes
-    const ipLimit = await checkRateLimit(
-      `ratelimit:login:ip:${ip}`,
-      30,
-      5 * 60
-    );
-    
-    if (!ipLimit.success) {
-      throw new Error(`IP rate limit exceeded. Try again in ${ipLimit.resetIn} seconds`);
+      this.#route = route;
+      // Pre-normalize configs for faster lookup
+      this.#normalizedConfigs = new Map(
+        configs.map((config) => [config.identifierType.toLowerCase(), config])
+      );
     }
 
-    // More lenient email-based limit: 10 attempts per minute
-    if (email) {
-      const emailLimit = await checkRateLimit(
-        `ratelimit:login:email:${email}`,
-        10,
-        60
+    /**
+     * Checks if the rate limit is exceeded for a given identifier.
+     * @param {string} identifierType - The type of identifier (e.g., 'ip', 'user').
+     * @param {string} identifierValue - The value of the identifier (e.g., '192.168.1.1', 'user123').
+     * @throws {Error} If the rate limit is exceeded.  The error message includes the route, identifier type, identifier value, and time until reset.
+     */
+    async checkRateLimit(identifierType, identifierValue) {
+      const config = this.#getIdentifierConfig(identifierType);
+      const key = this.#getIdentifierKey(identifierType, identifierValue);
+
+      const result = await this.#checkRateLimit(
+        key,
+        config.limit,
+        config.windowInSeconds
       );
 
-      if (!emailLimit.success) {
-        throw new Error(`Too many login attempts. Try again in ${emailLimit.resetIn} seconds`);
+      if (!result.success) {
+        throw new Error(
+          `${
+            this.#route
+          } rate limit exceeded for ${identifierType}: ${identifierValue}. Try again in ${
+            result.resetIn
+          } seconds`
+        );
       }
     }
 
-    return true;
-  };
+    /**
+     * Gets the rate limit configuration for a given identifier type
+     * @private
+     * @param {string} identifierType - The type of identifier
+     * @returns {Object} The rate limit configuration
+     * @throws {Error} If no configuration exists for the identifier type
+     */
+    #getIdentifierConfig(identifierType) {
+      const config = this.#normalizedConfigs.get(identifierType.toLowerCase());
 
-  /**
-   * Rate limit for refresh token operations
-   * Limits refresh token usage per user and per IP
-   */
-  const refreshTokenRateLimit = async (ip, userId) => {
-    // IP-based limit: 60 refreshes per hour
-    const ipLimit = await checkRateLimit(
-      `ratelimit:refresh:ip:${ip}`,
-      60,
-      60 * 60
-    );
+      if (!config) {
+        throw new Error(
+          `No rate limit config found for identifier type: ${identifierType}`
+        );
+      }
 
-    if (!ipLimit.success) {
-      throw new Error(`IP rate limit exceeded. Try again in ${ipLimit.resetIn} seconds`);
+      return config;
     }
 
-    // User-based limit: 30 refreshes per hour
-    if (userId) {
-      const userLimit = await checkRateLimit(
-        `ratelimit:refresh:user:${userId}`,
-        30,
-        60 * 60
+    /**
+     * Generates a Redis key for rate limiting
+     * @private
+     * @param {string} identifierType - The type of identifier
+     * @param {string} identifierValue - The value of the identifier
+     * @returns {string} The Redis key
+     */
+    #getIdentifierKey(identifierType, identifierValue) {
+      // Avoid array creation and multiple toLowerCase calls
+      return `${this.#keyPrefix}${
+        this.#route
+      }:${identifierType}:${identifierValue}`.toLowerCase();
+    }
+
+    /**
+     * Checks rate limit for a given key
+     * @private
+     * @param {string} key - Redis key
+     * @param {number} requestLimit - Maximum requests allowed
+     * @param {number} windowInSeconds - Time window in seconds
+     * @returns {Promise<{success: boolean, remaining: number, resetIn: number}>}
+     */
+    async #checkRateLimit(key, requestLimit, windowInSeconds) {
+      try {
+        if (!redisClient?.connection) {
+          console.warn("Redis client unavailable - rate limiting disabled");
+          // Maintain fail-open behavior for high availability
+          return { success: true, remaining: requestLimit, resetIn: 0 };
+        }
+
+        const now = Date.now();
+        const windowStart = now - windowInSeconds * 1000;
+
+        // Execute the Redis multi command and extract the count of remaining timestamps.  The result of .exec() is an array,
+        // where the third element ([, , count]) contains the count of elements returned by zcard.  We use destructuring
+        // to get only the count value, ignoring the results of zadd and zremrangebyscore.
+        // Pipeline Redis commands in a single round-trip for efficiency
+        const [[,], [,], [, requestCount], [, oldestTimestamp]] =
+          await redisClient.connection
+            .multi()
+            .zadd(key, now, now.toString())
+            .zremrangebyscore(key, "-inf", windowStart)
+            .zcard(key)
+            .zrange(key, 0, 0)
+            .expire(key, windowInSeconds)
+            .exec();
+
+        const success = requestCount <= requestLimit;
+        const remaining = success
+          ? Math.max(0, requestLimit - requestCount)
+          : 0;
+        const resetIn = success
+          ? 0
+          : this.#calculateResetTime(oldestTimestamp, windowInSeconds, now);
+
+        return { success, resetIn, remaining };
+      } catch (error) {
+        console.error(`Rate limiter error for key ${key}:`, error);
+        // Maintain fail-open behavior for resilience
+        return { success: true, remaining: requestLimit, resetIn: 0 };
+      }
+    }
+
+    /**
+     * Calculates time until rate limit reset
+     * @private
+     * @param {string} oldestTimestamp - Oldest request timestamp
+     * @param {number} windowInSeconds - Time window in seconds
+     * @param {number} now - Current timestamp
+     * @returns {number} Seconds until reset
+     */
+    #calculateResetTime(oldestTimestamp, windowInSeconds, now) {
+      if (!oldestTimestamp) return windowInSeconds;
+      const resetTime = Math.ceil(
+        (parseInt(oldestTimestamp) + windowInSeconds * 1000 - now) / 1000
       );
-
-      if (!userLimit.success) {
-        throw new Error(`Refresh rate limit exceeded. Try again in ${userLimit.resetIn} seconds`);
-      }
+      return Math.max(0, resetTime); // Ensure non-negative
     }
-
-    return true;
   };
-
-  return {
-    loginRateLimit,
-    refreshTokenRateLimit
-  };
-};
