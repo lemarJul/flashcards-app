@@ -14,7 +14,7 @@ const jwtManager = require("../modules/jwtManager")({
   redisClient,
 });
 
-async function login(email, password, ip) {
+async function login(email, password) {
   try {
     const user = await userService.findOne({ where: { email } });
     if (!user) throw new Api404Error(`User with email ${email} not found`);
