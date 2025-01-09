@@ -1,32 +1,31 @@
+/**
+ * Schemas for API requests related to flashcards.
+ *
+ * @module schemas
+ */
 const Joi = require("joi");
 
-const questionSchema = Joi.string().required();
-const answerSchema = Joi.string().required();
-const categorySchema = Joi.string().required();
-
-const createSchema = Joi.object({
-  question: questionSchema,
-  answer: answerSchema,
-  category: categorySchema,
-});
-
-const updateSchema = Joi.object({
-  question: questionSchema,
-  answer: answerSchema,
-  category: categorySchema,
-});
-
-const reviewsSchema = Joi.object({
-  flashcards: Joi.array().items(
-    Joi.object({
-      id: Joi.number().integer().required(),
-      isSuccessful: Joi.boolean().allow(null),
-    })
-  ),
-});
+const question = Joi.string().required();
+const answer = Joi.string().required();
+const category = Joi.string().required();
 
 module.exports = {
-  create: createSchema,
-  reviews: reviewsSchema,
-  update: updateSchema,
+  create: Joi.object({
+    question,
+    answer,
+    category,
+  }),
+  update: Joi.object({
+    question,
+    answer,
+    category,
+  }),
+  reviews: Joi.object({
+    flashcards: Joi.array().items(
+      Joi.object({
+        id: Joi.number().integer().required(),
+        isSuccessful: Joi.boolean().allow(null),
+      })
+    ),
+  }),
 };
